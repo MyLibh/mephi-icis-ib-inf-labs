@@ -11,7 +11,7 @@
 
 [Файл](lab.pas)
 
-```
+```pascal
 program Lab1;
 
 var x, k : integer;
@@ -36,7 +36,7 @@ begin
   write('Input x: '); read(x);
   write('Input k: '); read(k);
 
-  writeln('Answer: ', get_k_sum(x, k))
+  writeln('Answer: ', get_k_sum(x, k));
 end.
 ```
 
