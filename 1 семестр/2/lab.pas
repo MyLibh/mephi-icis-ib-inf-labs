@@ -9,7 +9,6 @@ function get_atan(x, eps : real) : real;
 var sign, tmp, n : integer;
 var nth : real;
 begin
-    if (x < -1) or (x > 1) then Halt(-1);
     if (eps = 0) then Halt(-1);
 
     eps := Abs(eps);

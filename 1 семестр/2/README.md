@@ -23,7 +23,6 @@ function get_atan(x, eps : real) : real;
 var sign, tmp, n : integer;
 var nth : real;
 begin
-    if (x < -1) or (x > 1) then Halt(-1);
     if (eps = 0) then Halt(-1);
 
     eps := Abs(eps);
@@ -64,6 +63,5 @@ end.
 ## Тесты
 
 Введем индикатор ошибки: -1.
-* Заметим, что если |x| > 1, то ошибка.
 * Заметим, что если eps == 0, то ошибка.
 * Если eps <= 0, то мы берем |eps|
