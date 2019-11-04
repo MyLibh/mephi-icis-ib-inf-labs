@@ -12,7 +12,7 @@
 [Файл](lab.pas)
 
 ```pascal
-program lab5;
+program Lab5;
 
 const
     INPUT_PATH  = 'input.txt';
