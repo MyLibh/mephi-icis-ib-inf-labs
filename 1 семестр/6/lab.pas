@@ -93,13 +93,16 @@ begin
             ptr := ptr^.next;
         end;
 
-        ptr := prevmin^.next;
-        prevmin^.next := max;
-        max^.next := min^.next;
+        if min <> max then
+        begin
+            ptr := prevmin^.next;
+            prevmin^.next := max;
+            max^.next := min^.next;
 
-        prev := prevmax^.next;
-        prevmax^.next := min;
-        min^.next := max;
+            prev := prevmax^.next;
+            prevmax^.next := min;
+            min^.next := max;
+        end;
     end;
 end;
 
