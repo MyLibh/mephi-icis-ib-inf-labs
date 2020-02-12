@@ -24,21 +24,20 @@ inline int compare(const void* a, const void* b);
 
 signed main(void)
 {
-	printf("Enter n\n> ");
-	
-	size_t n;
-	scanf_s("%zu", &n);
-
 	seq_t seq;
-	seq.n	 = n;
+	seq.n	 = 0;
 	seq.data = NULL;
+
+	printf("Enter n\n> ");
+	scanf_s("%zu", &seq.n);
+
 	AllocateSequence(&seq);
 	
 	printf("\nEnter sequence\n> ");
 	ReadSequence(&seq);
 	
 	seq_t new_seq;
-	new_seq.n	 = n << 1;
+	new_seq.n	 = seq.n << 1;
 	new_seq.data = NULL;
 	AllocateSequence(&new_seq);
 
