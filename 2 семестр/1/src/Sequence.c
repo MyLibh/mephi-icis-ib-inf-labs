@@ -20,7 +20,7 @@ void AllocateSequence(seq_t* sequence)
 	{
 		printf("Cannot allocate memory for the sequence\n");
 
-		abort(); // Can cause memory leak
+		exit(1);
 	}
 }
 

@@ -21,30 +21,28 @@ typedef struct _tag_sequence
 /*!
  *  @brief  Allocates memory for sequence
  *
- *  @param[out]  Pointer to sequence
- *
- *  @note  Calls 'abort' if allocation fails. May cause memory leaks
+ *  @param[out]  sequence  Pointer to sequence
  */
 void AllocateSequence(seq_t* sequence);
 
 /*!
  *  @brief  Deallocates memory for sequence
  *
- *  @param[out]  Pointer to sequence
+ *  @param[out]  sequence  Pointer to sequence
  */
 void DeallocateSequence(seq_t* sequence);
 
 /*!
  *  @brief  Reads data from stdin
  *
- *  @param[out]  Pointer to sequence
+ *  @param[out]  sequence  Pointer to sequence
  */
 void ReadSequence(seq_t* sequence);
 
 /*!
  *  @brief  Prints sequence to stdout
  *
- *  @param[in]  Pointer to sequence
+ *  @param[in]  sequence  Pointer to sequence
  */
 void PrintSequence(const seq_t* sequence);
 
