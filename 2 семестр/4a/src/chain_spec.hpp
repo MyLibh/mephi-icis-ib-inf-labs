@@ -21,13 +21,16 @@ public:
 	chain_hash_table(const std::size_t capacity, std::shared_ptr<std::size_t> item_t::* ptr_to_index);
 
 	[[nodiscard]]
+	__forceinline auto capacity() const noexcept
+	{
+		return m_table.size();
+	}
+
+	[[nodiscard]]
 	__forceinline auto length() const noexcept
 	{
 		return m_length;
 	}
-
-	[[nodiscard]]
-	inline auto number_of_items() const noexcept;
 
 	void add(std::shared_ptr<_Key> key, item_t item);
 
@@ -36,14 +39,12 @@ public:
 	void remove(std::shared_ptr<_Key> key) noexcept;
 
 	[[nodiscard]]
-	inline auto get(std::shared_ptr<_Key> key, const std::size_t index) noexcept;
+	inline auto get(std::shared_ptr<_Key> key, const std::size_t index) const noexcept;
 
 	[[nodiscard]]
-	inline auto get(std::shared_ptr<_Key> key) noexcept;
+	inline auto get(std::shared_ptr<_Key> key) const;
 
-	void print(std::ostream& ostr = std::cout);
-
-	friend std::ostream& operator<<(std::ostream& ostr, const chain_hash_table<_Key, item<_Key1, _Key2, _T>>& table);
+	void print(std::ostream& ostr = std::cout) const;
 
 private:
 	std::size_t												 m_length;
@@ -87,7 +88,7 @@ inline void chain_hash_table<_Key, item<_Key1, _Key2, _T>>::remove(std::shared_p
 }
 
 template<typename _Key, typename _Key1, typename _Key2, typename _T>
-inline auto chain_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<_Key> key, const std::size_t index) noexcept
+inline auto chain_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<_Key> key, const std::size_t index) const noexcept
 {
 	auto hash = calc_hash(key);
 
@@ -95,7 +96,7 @@ inline auto chain_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<
 }
 
 template<typename _Key, typename _Key1, typename _Key2, typename _T>
-inline auto chain_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<_Key> key) noexcept
+inline auto chain_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<_Key> key) const 
 {
 	auto hash = calc_hash(key);
 
@@ -103,17 +104,9 @@ inline auto chain_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<
 }
 
 template<typename _Key, typename _Key1, typename _Key2, typename _T>
-inline void chain_hash_table<_Key, item<_Key1, _Key2, _T>>::print(std::ostream& ostr /* = std::cout */)
+inline void chain_hash_table<_Key, item<_Key1, _Key2, _T>>::print(std::ostream& ostr /* = std::cout */) const
 {
 	for (auto&& list : m_table)
 		if (list.length())
 			list.print(ostr), ostr << std::endl;
-}
-
-template<typename _Key, typename _Key1, typename _Key2, typename _T>
-inline std::ostream& operator<<(std::ostream& ostr, const chain_hash_table<_Key, item<_Key1, _Key2, _T>>& table)
-{
-	table.print(ostr);
-
-	return ostr;
 }

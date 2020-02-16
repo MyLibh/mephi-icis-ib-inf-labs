@@ -44,9 +44,9 @@ public:
 	bool remove(std::shared_ptr<_Key> key) noexcept;
 
 	[[nodiscard]]
-	inline auto get(std::shared_ptr<_Key> key) noexcept;
+	inline auto get(std::shared_ptr<_Key> key) const noexcept;
 
-	void print(std::ostream& ostr = std::cout);
+	void print(std::ostream& ostr = std::cout) const;
 
 	friend std::ostream& operator<<(std::ostream& ostr, const chain_hash_table<_Key, _T>& table);
 
@@ -96,7 +96,7 @@ bool chain_hash_table<_Key, _T>::remove(std::shared_ptr<_Key> key) noexcept
 
 template<typename _Key, typename _T>
 [[nodiscard]]
-inline auto chain_hash_table<_Key, _T>::get(std::shared_ptr<_Key> key) noexcept
+inline auto chain_hash_table<_Key, _T>::get(std::shared_ptr<_Key> key) const noexcept
 {
 	auto hash = calc_hash(key);
 
@@ -104,7 +104,7 @@ inline auto chain_hash_table<_Key, _T>::get(std::shared_ptr<_Key> key) noexcept
 }
 
 template<typename _Key, typename _T>
-void chain_hash_table<_Key, _T>::print(std::ostream& ostr /* = std::cout */)
+void chain_hash_table<_Key, _T>::print(std::ostream& ostr /* = std::cout */) const
 {
 	for (auto&& list : m_table)
 		if (list.length())

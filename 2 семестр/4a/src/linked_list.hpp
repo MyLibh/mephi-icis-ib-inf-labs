@@ -63,9 +63,9 @@ public:
 		return m_head;
 	}
 
-	void print(std::ostream& rOstr = std::cout) const;
+	void print(std::ostream& ostr = std::cout) const;
 
-	friend std::ostream& operator<<(std::ostream& rOstr, const linked_list<_T>& list);
+	friend std::ostream& operator<<(std::ostream& ostr, const linked_list<_T>& list);
 
 private:
 	std::shared_ptr<node_t> m_head;
@@ -116,12 +116,12 @@ inline void linked_list<_T>::add(_T data)
 }
 
 template<typename _T>
-inline void linked_list<_T>::print(std::ostream& rOstr /* = std::cout */) const
+inline void linked_list<_T>::print(std::ostream& ostr /* = std::cout */) const
 {
 	auto ptr{ m_head };
 	while (ptr)
 	{
-		rOstr << ptr->data << " ";
+		ostr << ptr->data << " ";
 
 		ptr = ptr->next;
 	}

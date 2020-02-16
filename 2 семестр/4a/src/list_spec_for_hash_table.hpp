@@ -5,9 +5,17 @@
 template<typename _Key, typename _T>
 class linked_list<std::pair<_Key, _T>>
 {
+	static_assert(has_operator_out_v<_T>, "_T must have operator std::ostream<<");
+
 	using node_t = typename node<_T>::node_t;
 
 public:
+	[[nodiscard]]
+	__forceinline auto length() const noexcept
+	{
+		return m_length;
+	}
+
 	void add(std::shared_ptr<_Key> key, std::shared_ptr<_T> data);
 
 	bool remove(std::shared_ptr<_Key> key) noexcept;
@@ -15,9 +23,7 @@ public:
 	[[nodiscard]]
 	std::shared_ptr<_T> get(std::shared_ptr<_Key> key) const noexcept;
 
-	void print(std::ostream& rOstr = std::cout) const;
-
-	//friend std::ostream& operator<<(std::ostream& rOstr, const linked_list<std::pair<_Key, _T>>& list);
+	void print(std::ostream& ostr = std::cout) const;
 
 private:
 	std::shared_ptr<node_t> m_head;
@@ -85,4 +91,16 @@ inline std::shared_ptr<_T> linked_list<std::pair<_Key, _T>>::get(std::shared_ptr
 	}
 
 	return nullptr;
+}
+
+template<typename _Key, typename _T>
+inline void linked_list<std::pair<_Key, _T>>::print(std::ostream& ostr /* = std::cout */) const
+{
+	auto ptr{ m_head };
+	while (ptr)
+	{
+		ostr << ptr->data.second << " ";
+
+		ptr = ptr->next;
+	}
 }

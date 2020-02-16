@@ -93,49 +93,46 @@ inline table_cli<_Key1, _Key2, _T>::table_cli(std::shared_ptr<table<_Key1, _Key2
 template<typename _Key1, typename _Key2, typename _T>
 inline void table_cli<_Key1, _Key2, _T>::add()
 {
-	auto key1 = get_key1();
-	auto key2 = get_key2();
-	auto data = get_data();
+	auto key1{ get_key1() };
+	auto key2{ get_key2() };
+	auto data{ get_data() };
 	
 	item<_Key1, _Key2, _T> res(key1, key2, data);
 
-	m_table->add(res.key1, res.key2, res);
+	if(!m_table->add(res.key1, res.key2, res))
+		std::cerr << "[ERROR] Cannot add new element" << std::endl;
 }
 
 template<typename _Key1, typename _Key2, typename _T>
 inline void table_cli<_Key1, _Key2, _T>::remove()
 { 
+	bool res{};
 	if (use_key1())
 	{
-		auto key1 = get_key1();
-		auto index = get_index();
+		auto key1{ get_key1() };
+		auto index{ get_index() };
 
-		m_table->remove_by_key1(std::make_shared<_Key1>(key1), index);
+		res = m_table->remove_by_key1(std::make_shared<_Key1>(key1), index);
 	}
 	else
 	{
-		auto key2 = get_key2();
-		auto index = get_index();
+		auto key2{ get_key2() };
+		auto index{ get_index() };
 
-		m_table->remove_by_key2(std::make_shared<_Key2>(key2), index);
+		res = m_table->remove_by_key2(std::make_shared<_Key2>(key2), index);
 	}
+
+	if(!res)
+		std::cerr << "[ERROR] Cannot remove element" << std::endl;
 }
 
 template<typename _Key1, typename _Key2, typename _T>
 inline void table_cli<_Key1, _Key2, _T>::remove_all()
 {
 	if (use_key1())
-	{
-		auto key1 = get_key1();
-
-		m_table->remove_all_by_key1(std::make_shared<_Key1>(key1));
-	}
+		m_table->remove_all_by_key1(std::make_shared<_Key1>(get_key1()));
 	else
-	{
-		auto key2 = get_key2();
-
-		m_table->remove_all_by_key2(std::make_shared<_Key2>(key2));
-	}
+		m_table->remove_all_by_key2(std::make_shared<_Key2>(get_key2()));
 }
 
 template<typename _Key1, typename _Key2, typename _T>
@@ -143,20 +140,13 @@ inline void table_cli<_Key1, _Key2, _T>::find()
 {
 	linked_list<item<_Key1, _Key2, _T>> list;
 	if (use_key1())
-	{
-		auto key1 = get_key1();
-
-		list = std::move(m_table->find_by_key1(std::make_shared<_Key1>(key1)));
-	}
+		list = std::move(m_table->find_by_key1(std::make_shared<_Key1>(get_key1())));
 	else
-	{
-		auto key2 = get_key2();
-
-		list = std::move(m_table->find_by_key2(std::make_shared<_Key2>(key2)));
-	}
+		list = std::move(m_table->find_by_key2(std::make_shared<_Key2>(get_key2())));
 
 	std::cout << "Result" << std::endl;
 	list.print();
+	std::cout << std::endl;
 }
 
 template<typename _Key1, typename _Key2, typename _T>

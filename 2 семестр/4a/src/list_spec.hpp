@@ -19,6 +19,8 @@ std::ostream& operator<<(std::ostream& ostr, const data_t<_Key, _Key1, _Key2, _T
 template<typename _Key, typename _Key1, typename _Key2, typename _T>
 class linked_list<data_t<_Key, _Key1, _Key2, _T>>
 {
+	static_assert(has_operator_out_v<_T>, "_T must have operator std::ostream<<");
+
 	using item_t = item<_Key1, _Key2, _T>;
 	using node_t = typename node<data_t<_Key, _Key1, _Key2, _T>>::node_t;
 
@@ -45,8 +47,6 @@ public:
 
 	void print(std::ostream& ostr = std::cout) const;
 
-	friend std::ostream& operator<<(std::ostream& ostr, const linked_list<data_t<_Key, _Key1, _Key2, _T>>& list);
-
 private:
 	std::shared_ptr<node_t>				   m_head;
 	std::size_t							   m_length;
@@ -67,6 +67,9 @@ void linked_list<data_t<_Key, _Key1, _Key2, _T>>::add(std::shared_ptr<_Key> key,
 	std::size_t index{};
 	while (ptr)
 	{
+		if (*ptr->data.first == *key)
+			index = std::max(index, *(ptr->data.second.*m_ptr_to_index));
+
 		if (!ptr->next)
 		{
 			ptr->next = std::make_shared<node_t>(std::make_pair(key, data));
@@ -76,9 +79,6 @@ void linked_list<data_t<_Key, _Key1, _Key2, _T>>::add(std::shared_ptr<_Key> key,
 			break;
 		}
 
-		if (*ptr->data.first == *key)
-			index = std::max(index, *(ptr->data.second.*m_ptr_to_index));
-
 		ptr = ptr->next;
 	}
 
@@ -86,7 +86,7 @@ void linked_list<data_t<_Key, _Key1, _Key2, _T>>::add(std::shared_ptr<_Key> key,
 	{
 		m_head = std::make_shared<node_t>(std::make_pair(key, data));
 
-		*(m_head->data.second.*m_ptr_to_index) = index;
+		*(m_head->data.second.*m_ptr_to_index) = ++index;
 	}
 
 	m_length++;
@@ -184,12 +184,4 @@ inline void linked_list<data_t<_Key, _Key1, _Key2, _T>>::print(std::ostream& ost
 
 		ptr = ptr->next;
 	}
-}
-
-template<typename _Key, typename _Key1, typename _Key2, typename _T>
-std::ostream& operator<<(std::ostream& ostr, const linked_list<data_t<_Key, _Key1, _Key2, _T>>& list)
-{
-	list.print(ostr);
-
-	return ostr;
 }

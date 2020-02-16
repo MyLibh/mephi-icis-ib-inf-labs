@@ -31,6 +31,18 @@ private:
 public:
 	probe_hash_table(const std::size_t capacity, std::shared_ptr<std::size_t> item_t::*);
 
+	[[nodiscard]]
+	__forceinline auto capacity() const noexcept
+	{
+		return m_table.size();
+	}
+
+	[[nodiscard]]
+	__forceinline auto length() const noexcept
+	{
+		return m_length;
+	}
+
 	bool add(std::shared_ptr<_Key> key, item_t data);
 
 	bool remove(std::shared_ptr<_Key> key, const std::size_t index) noexcept;
@@ -41,22 +53,20 @@ public:
 	auto get(std::shared_ptr<_Key> key, const std::size_t index) const noexcept;
 
 	[[nodiscard]]
-	auto get(std::shared_ptr<_Key> key) const noexcept;
+	auto get(std::shared_ptr<_Key> key) const;
 
 	void print(std::ostream& ostr = std::cout) const;
 
-	friend std::ostream& operator<<(std::ostream& ostr, const probe_hash_table<_Key, item<_Key1, _Key2, _T>>& table);
-
 private:
-	std::vector<std::shared_ptr<std::pair<_Key, item_t>>> m_table;
 	std::size_t											  m_length;
+	std::vector<std::shared_ptr<std::pair<_Key, item_t>>> m_table;
 	std::shared_ptr<std::size_t> item_t::*				  m_ptr_to_index;
 };
 
 template<typename _Key, typename _Key1, typename _Key2, typename _T>
 inline probe_hash_table<_Key, item<_Key1, _Key2, _T>>::probe_hash_table(const std::size_t capacity, std::shared_ptr<std::size_t> item_t::* ptr_to_index) :
+	m_length{ 0U }, 
 	m_table(capacity),
-	m_length{ 0U },
 	m_ptr_to_index{ ptr_to_index }
 { }
 
@@ -80,7 +90,7 @@ inline bool probe_hash_table<_Key, item<_Key1, _Key2, _T>>::add(std::shared_ptr<
 	m_length++;
 	m_table.at(hash_idx) = std::make_shared<std::pair<_Key, item_t>>(*key, data);
 
-	*(m_table.at(hash_idx)->second.*m_ptr_to_index) = hash_idx == calc_hash(key) ? index : ++index;
+	*(m_table.at(hash_idx)->second.*m_ptr_to_index) = ++index;
 
 	 return true;
 }
@@ -141,7 +151,7 @@ inline auto probe_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<
 
 template<typename _Key, typename _Key1, typename _Key2, typename _T>
 [[nodiscard]]
-inline auto probe_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<_Key> key) const noexcept
+inline auto probe_hash_table<_Key, item<_Key1, _Key2, _T>>::get(std::shared_ptr<_Key> key) const
 {
 	linked_list<item_t> res;
 	auto hash_idx{ calc_hash(key) };
@@ -162,12 +172,4 @@ inline void probe_hash_table<_Key, item<_Key1, _Key2, _T>>::print(std::ostream& 
 	for (auto&& cell : m_table)
 		if (auto def = _Key{}; cell && cell->first != def)
 			ostr << cell->second << std::endl;
-}
-
-template<typename _Key, typename _Key1, typename _Key2, typename _T>
-std::ostream& operator<<(std::ostream& ostr, const probe_hash_table<_Key, item<_Key1, _Key2, _T>>& table)
-{
-	table.print(ostr);
-
-	return ostr;
 }

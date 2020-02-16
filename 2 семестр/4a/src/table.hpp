@@ -11,8 +11,6 @@ class table
 {
 	using item_t = item<_Key1, _Key2, _T>;
 
-	// friend class table_cli<_Key1, _Key2, _T>;
-
 public:
 	table(const std::size_t capacity);
 
@@ -102,6 +100,7 @@ inline linked_list<typename table<_Key1, _Key2, _T>::item_t> table<_Key1, _Key2,
 template<typename _Key1, typename _Key2, typename _T>
 inline void table<_Key1, _Key2, _T>::print(std::ostream& ostr /* = std::cout */)
 {
-	m_chain.print(ostr); ostr << std::endl << std::endl;
-	m_probe.print(ostr); ostr << std::endl;
+	ostr << "Separate Chaining(" << m_chain.length() << ")\n" << m_chain << std::endl << std::endl;
+
+	ostr << "Linear Probing(" << m_probe.length() << "/" << m_probe.capacity() << ")\n" << m_probe << std::endl;
 }

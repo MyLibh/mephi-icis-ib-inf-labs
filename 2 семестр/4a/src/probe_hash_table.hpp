@@ -18,45 +18,100 @@ private:
 	}
 
 	[[nodiscard]]
-	__forceinline std::size_t get_index(_Key key, const std::size_t i) const noexcept
+	__forceinline std::size_t get_next(const std::size_t hash_idx) const noexcept
 	{
-		return (calc_hash(key) + i * probe_hash_table::K);
+		return ((hash_idx +  probe_hash_table::K) % m_table.size());
 	}
 
 public:
 	probe_hash_table(const std::size_t capacity);
 
-	void add(_Key key, _T data);
-	void remove(_Key key) noexcept;
-	_T get(_Key key) const noexcept;
+	[[nodiscard]]
+	__forceinline auto capacity() const noexcept
+	{
+		return m_table.size();
+	}
+
+	[[nodiscard]]
+	__forceinline auto length() const noexcept
+	{
+		return m_length;
+	}
+
+	bool add(_Key key, _T data);
+
+	bool remove(_Key key) noexcept;
+
+	[[nodiscard]]
+	auto get(_Key key) const noexcept;
 
 	void print(std::ostream& ostr = std::cout) const;
 
 	friend std::ostream& operator<<(std::ostream& ostr, const probe_hash_table<_Key, _T>& table);
 
 private:
-	std::vector<std::pair<_Key, _T>> m_table;
 	std::size_t						 m_length;
+	std::vector<std::pair<_Key, _T>> m_table;
 };
 
 template<typename _Key, typename _T>
 inline probe_hash_table<_Key, _T>::probe_hash_table(const std::size_t capacity) :
+	m_length{ 0U },
 	m_table(capacity)
 { }
 
 template<typename _Key, typename _T>
-inline void probe_hash_table<_Key, _T>::add(_Key key, _T data)
+inline bool probe_hash_table<_Key, _T>::add(_Key key, _T data)
 {
+	if (m_length == m_table.size())
+		return false;
+
+	auto hash_idx{ calc_hash(key) };
+	auto def = _Key{};
+	while (m_table.at(hash_idx) && m_table.at(hash_idx)->first != def)
+		hash_idx = get_next(hash_idx);
+
+	m_length++;
+	m_table.at(hash_idx) = std::make_pair(_Key{}, _T{});
+
+	return true;
 }
 
 template<typename _Key, typename _T>
-inline void probe_hash_table<_Key, _T>::remove(_Key key) noexcept
+inline bool probe_hash_table<_Key, _T>::remove(_Key key) noexcept
 {
+	auto hash_idx{ calc_hash(key) };
+	while (m_table.at(hash_idx))
+	{
+		if (m_table.at(hash_idx).first == key)
+		{
+			m_length--;
+
+			m_table.at(hash_idx) = std::make_pair(_Key{}, _T{});
+
+			return true;
+		}
+
+		hash_idx = get_next(hash_idx);
+	}
+
+	return false;
 }
 
 template<typename _Key, typename _T>
-inline _T probe_hash_table<_Key, _T>::get(_Key key) const noexcept
+[[nodiscard]]
+inline auto probe_hash_table<_Key, _T>::get(_Key key) const noexcept
 {
+	auto hash_idx{ calc_hash(key) };
+	while (m_table.at(hash_idx))
+	{
+		if (m_table.at(hash_idx)->first == key)
+			return m_table.at(hash_idx)->second;
+
+		hash_idx = get_next(hash_idx);
+	}
+
+	return _T{ };
 }
 
 template<typename _Key, typename _T>
@@ -67,7 +122,7 @@ inline void probe_hash_table<_Key, _T>::print(std::ostream& ostr) const
 }
 
 template<typename _Key, typename _T>
-inline std::ostream& operator<<(std::ostream& ostr, const probe_hash_table<_Key, _T>& table)
+std::ostream& operator<<(std::ostream& ostr, const probe_hash_table<_Key, _T>& table)
 {
 	table.print(ostr);
 
