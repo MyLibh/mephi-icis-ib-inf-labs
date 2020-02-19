@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\ds">
+      <UniqueIdentifier>{6f70d5dc-1618-49c0-9b1c-5cbdc5d8c47f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\table">
+      <UniqueIdentifier>{0d93e06b-b34a-4a30-add4-1c4ac4a6f225}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{2183dfae-87a7-441e-93cc-bba0355e107f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\interface.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\chain_hash_table.hpp">
+      <Filter>Header Files\ds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\linked_list.hpp">
+      <Filter>Header Files\ds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\probe_hash_table.hpp">
+      <Filter>Header Files\ds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\list_spec_for_hash_table.hpp">
+      <Filter>Header Files\ds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\chain_spec.hpp">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\list_spec.hpp">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\probe_spec.hpp">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\table_cli.hpp">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\item.hpp">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\table.hpp">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
