@@ -1,102 +1,80 @@
 #include "cbst.hpp"
+#include "thread_poll.hpp"
 
 #include <string>
+#include <iostream>
 
-namespace test
-{
-	void cond1()
-	{
-		cbst<int, std::string> tree;
+constexpr auto MIN_OPS = 1;
+constexpr auto MAX_OPS = 5000;
+constexpr auto THREADS_NUM = 4U;
+constexpr auto MIN_KEY = 0;
+constexpr auto MAX_KEY = 10;
+constexpr auto DATA_LENGTH = 5U;
 
-		tree.insert(10, "");
-		tree.insert(9, "");
-		tree.insert(11, "");
-
-		std::cout << "COND1 TEST\n\n" << tree << std::endl;
-
-		tree.fix_to_key(10);
-
-		std::cout << tree << std::endl;
-	}
-
-	void cond2()
-	{
-		cbst<int, std::string> tree;
-
-		tree.insert(10, "");
-		tree.insert(13, "");
-		tree.insert(14, "");
-
-		std::cout << "COND2 TEST(root)\n\n" << tree << std::endl;
-		tree.fix_to_key(17); // root case
-		std::cout << tree << std::endl;
-		
-		tree.insert(16, "");
-		tree.insert(17, "");
-		std::cout << "COND2 TEST(node)\n\n" << tree << std::endl;
-		tree.fix_to_key(15); // root case
-		std::cout << tree << std::endl;
-	}
-
-	void cond3()
-	{
-		cbst<int, std::string> tree;
-
-		tree.insert(12, "");
-		tree.insert(7, "");
-		tree.insert(10, "");
-
-		std::cout << "COND3 TEST(root)\n\n" << tree << std::endl;
-		tree.fix_to_key(10);
-		std::cout << tree << std::endl;
-		
-		tree.fix_to_key(10);
-		tree.insert(9, "");
-		tree.insert(8, "");
-		std::cout << "COND3 TEST(node)\n\n" << tree << std::endl;
-		tree.fix_to_key(9);
-		std::cout << tree << std::endl;
-	}
-
-	void cond4()
-	{
-		cbst<int, std::string> tree;
-
-		tree.insert(10, "");
-		tree.insert(7, "");
-		tree.insert(8, "");
-		tree.insert(6, "");
-
-		tree.remove(7);
-
-		std::cout << "COND4 TEST\n\n" << tree << std::endl;
-		tree.fix_to_key(7);
-		std::cout << tree << std::endl;
-	}
-}
+#pragma warning(disable : 26444)
+// Avoid unnamed objects with custom construction and destruction.
 
 signed main()
 {
-	test::cond3();
-	
-	/*cbst<int, std::string> tree;
+	try
+	{
+		cbst<int, std::string> cbst;
+		
+		auto num_ops = generator::get_int(MIN_OPS, MAX_OPS);
+		std::cout << "Ops for each thread: " << num_ops << std::endl;
 
-	tree.insert(6, "a");
-	tree.insert(4, "b");
-	tree.insert(3, "c");
-	tree.insert(5, "d");
-	tree.insert(7, "z");
+		thread_pool<std::function<void()>> tp(THREADS_NUM);
+		[[maybe_unused]] std::mutex mutex;
+		tp.add_job([&, num_ops]() mutable
+			{
+				while (num_ops--)
+				{
+					auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
+					auto&& data = generator::get_str(DATA_LENGTH);
+					cbst.insert(std::move(key), std::move(data));
 
-	std::cout << tree << std::endl;
+#ifdef _DEBUG
+					std::lock_guard lock(mutex);
+					std::cout << "{" << std::this_thread::get_id() << "} Insert " << key << " " << data << std::endl;
+#endif /* _DEBUG */
+				}
+			});
+		tp.add_job([&, num_ops]() mutable 
+			{
+				while (num_ops--)
+				{
+					auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
+					cbst.remove(std::move(key));
 
-	tree.fix_to_key(3); tree.fix_to_key(5);
+#ifdef _DEBUG
+					std::lock_guard lock(mutex);
+					std::cout << "{" << std::this_thread::get_id() << "} Remove " << key << std::endl;
+#endif /* _DEBUG */
+				}
+			});
+		tp.add_job([&, num_ops]() mutable
+			{
+				while (num_ops--)
+				{
+					auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
+					auto&& [data, suc] = cbst.get(std::move(key));
 
-	std::cout << tree << std::endl;
-	if(tree.remove(3))
-		std::cout << tree << std::endl;
+#ifdef _DEBUG
+					std::lock_guard lock(mutex);
+					std::cout << "{" << std::this_thread::get_id() << "} Get " << key << " " << std::boolalpha << suc << std::endl;
+#endif /* _DEBUG */
+				}
+			});
+		//tp.add_job([&, num_ops]() mutable { while (num_ops--) cbst.fix_to_key(generator::get_int(MIN_KEY, MAX_KEY)); });
+		
+		tp.wait_all();
+		
+		std::cout << cbst << std::endl;
+	}
+	catch (...)
+	{
+		std::cerr << "Unknown exception" << std::endl;
+	}
 
-	if (auto&& [val, suc] = tree.get(4); suc)
-		std::cout << val << std::endl;
-		*/
 	return 0;
 }

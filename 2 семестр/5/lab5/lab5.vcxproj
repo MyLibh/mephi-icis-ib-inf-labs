@@ -141,8 +141,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\src\cbst.hpp" />
+    <ClInclude Include="..\src\generator.hpp" />
+    <ClInclude Include="..\src\node.hpp" />
+    <ClInclude Include="..\src\thread_poll.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\generator.cpp" />
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

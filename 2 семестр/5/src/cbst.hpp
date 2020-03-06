@@ -1,65 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <iostream>
+#include "node.hpp"
+#include "generator.hpp"
+
 #include <queue>
-
-template<typename _Kty, typename _Ty>
-class node
-{
-public:
-    using key_t = _Kty;
-    using data_t = _Ty;
-    using ptr_node_t = std::shared_ptr<node<key_t, data_t>>;
-
-public:
-    [[nodiscard]]
-    static ptr_node_t& another(ptr_node_t v, ptr_node_t node<key_t, data_t>::* dir) noexcept
-    {
-        return (dir == &node<key_t, data_t>::left ? v->right : v->left);
-    }
-
-public:
-    node(key_t key = std::numeric_limits<key_t>::max(), data_t data = data_t{}, const int weight = 1, ptr_node_t left = nullptr, ptr_node_t right = nullptr) :
-        key(key),
-        data(data),
-        weight(weight),
-        left(left),
-        right(right)
-    { }
-    
-    __forceinline bool is_leaf() const noexcept
-    {
-        return (left == nullptr && right == nullptr);
-    }
-
-    __forceinline bool has_overweight() const noexcept
-    {
-        return (weight > 1);
-    }
-
-    void print(std::ostream& ostr = std::cout) const
-    {
-        if (this->is_leaf())
-            ostr << "[" << key << "]{" << data << "}";
-        else
-            ostr << "[" << key << "] " << (!weight ? "R" : (weight == 1 ? "B" : "O"));
-    }
-
-    template<typename _Key, typename _T>
-    friend std::ostream& operator<<(std::ostream& ostr, const node<_Key, _T>& node)
-    {
-        node.print(ostr);
-
-        return ostr;
-    }
-
-public:
-    key_t key;
-    data_t data;
-    int weight;
-    ptr_node_t left, right;
-};
 
 template<typename _Kty, typename _Ty>
 class cbst
@@ -171,175 +115,217 @@ private:
 
     void try_rebalance(ptr_node_t parent, ptr_node_t v) noexcept
     {
-        auto left = &node_t::left;
-        auto right = &node_t::right;
+        static const auto&& left = &node_t::left;
+        static const auto&& right = &node_t::right;
 
-        if (check_cond1(v))         fix_cond1(v);
-        if (check_cond2(v, left))   fix_cond2(parent, v, left);
-        if (check_cond2(v, right))  fix_cond2(parent, v, right);
-        if (check_cond3(v, left))   fix_cond3(parent, v, left);
-        if (check_cond3(v, right))  fix_cond3(parent, v, right);
-        if (check_cond4(v))         fix_cond4(v);
-        if (check_cond5(v, left))   fix_cond5(parent, v, left);
-        if (check_cond5(v, right))  fix_cond5(parent, v, right);
+        switch (auto cond = generator::get_int(1, 5); cond)
+        {
+        case 1: if (check_cond1(v))       fix_cond1(v);                                                                            break;
+        case 2: if (check_cond2(v, left)) fix_cond2(parent, v, left); else if (check_cond2(v, right)) fix_cond2(parent, v, right); break;
+        case 3: if (check_cond3(v, left)) fix_cond3(parent, v, left); else if (check_cond3(v, right)) fix_cond3(parent, v, right); break;
+        case 4: if (check_cond4(v))       fix_cond4(v);                                                                            break;
+        case 5: if (check_cond5(v, left)) fix_cond5(parent, v, left); else if (check_cond5(v, right)) fix_cond5(parent, v, right); break;
+        }
     }
 
 public:
-    cbst() :
-        m_root(std::make_shared<node_t>())
-    { }
+    cbst();
 
-    void fix_to_key(key_t&& key) noexcept
-    {
-        auto parent = m_root;
-        auto ptr = m_root;
-        while (!ptr->is_leaf())
-        {
-            try_rebalance(parent, ptr);
-            
-            parent = ptr;
-            ptr = key <= ptr->key ? ptr->left : ptr->right;
-        }
-    }
+    void fix_to_key(key_t&& key) noexcept;
 
-    bool insert(key_t&& key, data_t&& data)
-    {
-        if (m_root->is_leaf())
-        {
-            auto ptr = m_root;
-            m_root = std::make_shared<node_t>(key);
+    bool insert(key_t&& key, data_t&& data);
 
-            m_root->left = std::make_shared<node_t>(key, data);
-            m_root->right = ptr;
-
-            return true;
-        }
-
-        auto parent = m_root;
-        auto cur = m_root;
-        while (!cur->is_leaf())
-        {
-            // if (key == cur->key)
-            //     return false;
-
-            parent = cur;
-            cur = key <= cur->key ? cur->left : cur->right;
-        }
-
-        auto leaf = cur;
-        
-        cur = std::make_shared<node_t>(std::min(key, leaf->key), data_t{}, leaf->weight - 1);
-        if (key <= parent->key)
-            parent->left = cur;
-        else
-            parent->right = cur;
-
-        leaf->weight = 1;
-        if (key <= leaf->key)
-        {
-            cur->left = std::make_shared<node_t>(key, data);
-            cur->right = leaf;
-        }
-        else
-        {
-            cur->left = leaf;
-            cur->right = std::make_shared<node_t>(key, data);
-        }
-
-        return true;
-    }
-
-    bool remove(key_t&& key) noexcept
-    {
-        if (m_root->is_leaf())
-            return false;
-
-        auto grandparent = m_root;
-        auto parent = m_root;
-        auto cur = m_root;
-        while (!cur->is_leaf())
-        {
-            grandparent = parent;
-            parent = cur;
-            cur = key <= cur->key ? cur->left : cur->right;
-        }
-
-        if (key != cur->key)
-            return false;
-        
-        auto&& u = key > parent->key ? parent->left : parent->right;
-
-        if (key <= grandparent->key)
-        {
-            grandparent->left = u;
-
-            grandparent->left->weight = parent->weight + u->weight;
-        }
-        else
-        {
-            grandparent->right = u;
-
-            grandparent->right->weight = parent->weight + u->weight;
-        }
-
-        return true;
-    }
+    bool remove(key_t&& key) noexcept;
 
     [[nodiscard]]
-    std::pair<data_t&, bool> get(key_t&& key) const noexcept
-    {
-        auto ptr = m_root;
-        while (!ptr->is_leaf())
-            ptr = key <= ptr->key ? ptr->left : ptr->right;
+    std::pair<data_t&, bool> get(key_t&& key) const noexcept;
 
-        return { ptr->data, key == ptr->key };
-    }
-
-    void print(std::ostream& ostr = std::cout) const
-    {
-        if (!m_root)
-        {
-            ostr << "empty";
-
-            return;
-        }
-
-        std::size_t level{};
-        std::queue<ptr_node_t> queue;
-        queue.push(m_root);
-        while (!queue.empty())
-        {
-            ostr << level << " ";
-            auto num_nodes = queue.size();
-            while(num_nodes--)
-            {
-                auto cur = queue.front();
-
-                ostr << *cur << "    ";
-
-                if (cur->left)
-                    queue.push(cur->left);
-
-                if (cur->right)
-                    queue.push(cur->right);
-
-                queue.pop();
-            }
-
-            ostr << std::endl;
-
-            ++level;
-        }
-    }
+    void print(std::ostream& ostr) const;
 
     template<typename _Key, typename _T>
-    friend std::ostream& operator<<(std::ostream& ostr, const cbst<_Key, _T>& cbst)
-    {
-        cbst.print(ostr);
-
-        return ostr;
-    }
+    friend std::ostream& operator<<(std::ostream& ostr, const cbst<_Key, _T>& cbst);
 
 private:
     ptr_node_t m_root;
 };
+
+template<typename _Kty, typename _Ty>
+inline cbst<_Kty, _Ty>::cbst() :
+    m_root(std::make_shared<node_t>())
+{ }
+
+template<typename _Kty, typename _Ty>
+inline void cbst<_Kty, _Ty>::fix_to_key(key_t&& key) noexcept
+{
+    auto parent = m_root;
+    auto ptr = m_root;
+    while (!ptr->is_leaf())
+    {
+        try_rebalance(parent, ptr);
+
+        parent = ptr;
+        ptr = key <= ptr->key ? ptr->left : ptr->right;
+    }
+}
+
+template<typename _Kty, typename _Ty>
+inline bool cbst<_Kty, _Ty>::insert(key_t&& key, data_t&& data)
+{
+    std::shared_lock wlock(m_root->mutex);
+    if (m_root->is_leaf())
+    {
+        wlock.unlock();
+        std::lock_guard<std::shared_mutex> xlock(m_root->mutex);
+
+        auto ptr = m_root;
+        m_root = std::make_shared<node_t>(key);
+
+        m_root->left = std::make_shared<node_t>(key, data);
+        m_root->right = ptr;
+
+        return true;
+    }
+
+    auto ptr = m_root;
+    while (!ptr->is_leaf())
+    {
+        auto& tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
+
+        std::shared_lock tmp_wlock(tmp_ptr->mutex);
+
+        wlock.unlock();
+        wlock = std::move(tmp_wlock);
+
+        ptr = tmp_ptr;
+    }
+
+    if (key == ptr->key)
+        return false;
+
+    wlock.unlock(); // CHECK: rb-tree conditions can break
+    std::lock_guard<std::shared_mutex> xlock(ptr->mutex);
+    if (!ptr->is_leaf())
+        throw std::runtime_error("wrong pointerization occured");
+
+    auto dir = key <= ptr->key ? &node_t::left : &node_t::right;
+
+    *ptr.*dir = std::make_shared<node_t>(key, data);
+    node_t::another(ptr, dir) = std::make_shared<node_t>(ptr->key, std::move(ptr->data));
+
+    ptr->key = ptr->left->key;
+    ptr->weight--;
+
+    return true;
+}
+
+template<typename _Kty, typename _Ty>
+inline bool cbst<_Kty, _Ty>::remove(key_t&& key) noexcept
+{
+    std::shared_lock parent_wlock(m_root->mutex);
+    if (m_root->is_leaf())
+        return false;
+
+    auto parent = m_root;
+    auto ptr = m_root;
+    while (!ptr->is_leaf())
+    {
+        auto& tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
+
+        std::shared_lock tmp_wlock(tmp_ptr->mutex);
+
+        parent_wlock.unlock();
+        parent_wlock = std::move(tmp_wlock);
+
+        parent = ptr;
+        ptr = tmp_ptr;
+    }
+
+    if (key != ptr->key)
+        return false;
+
+    auto dir = key <= parent->key ? &node_t::left : &node_t::right;
+
+    parent_wlock.unlock();
+
+    using lg = std::lock_guard<std::shared_mutex>;
+    lg parent_xlock(parent->mutex); // CHECK: rb-tree conditions can break
+    lg xlock((*parent.*dir)->mutex);
+
+    auto sibling = node_t::another(parent, dir);
+    lg sibling_xlock(sibling->mutex);
+
+    parent->key = std::move(sibling->key);
+    parent->data = std::move(sibling->data);
+    parent->weight += sibling->weight;
+    parent->left = nullptr;
+    parent->right = nullptr;
+
+    return true;
+}
+
+template<typename _Kty, typename _Ty>
+[[nodiscard]]
+inline std::pair<typename cbst<_Kty, _Ty>::data_t&, bool> cbst<_Kty, _Ty>::get(key_t&& key) const noexcept
+{
+    std::shared_lock rlock(m_root->mutex);
+    auto ptr = m_root;
+    while (!ptr->is_leaf())
+    {
+        auto& tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
+
+        std::shared_lock tmp_rlock(tmp_ptr->mutex);
+
+        rlock.unlock();
+        rlock = std::move(tmp_rlock);
+
+        ptr = tmp_ptr;
+    }
+
+    return { ptr->data, key == ptr->key };
+}
+
+template<typename _Kty, typename _Ty>
+inline void cbst<_Kty, _Ty>::print(std::ostream& ostr) const
+{
+    if (!m_root)
+    {
+        ostr << "empty";
+
+        return;
+    }
+
+    std::size_t level{};
+    std::queue<ptr_node_t> queue;
+    queue.push(m_root);
+    while (!queue.empty())
+    {
+        ostr << level << " ";
+        auto num_nodes = queue.size();
+        while (num_nodes--)
+        {
+            auto cur = queue.front();
+
+            ostr << *cur << "    ";
+
+            if (cur->left)
+                queue.push(cur->left);
+
+            if (cur->right)
+                queue.push(cur->right);
+
+            queue.pop();
+        }
+
+        ostr << std::endl;
+
+        ++level;
+    }
+}
+
+template<typename _Key, typename _T>
+inline std::ostream& operator<<(std::ostream& ostr, const cbst<_Key, _T>& cbst)
+{
+    cbst.print(ostr);
+
+    return ostr;
+}
