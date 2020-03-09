@@ -1,8 +1,9 @@
 #pragma once
 
+#include "state_mutex.hpp"
+
 #include <memory>
 #include <iomanip>
-#include <shared_mutex>
 
 // TODO: This class should be moved into cbst
 
@@ -44,7 +45,7 @@ public:
     data_t data;
     int weight;
     ptr_node_t left, right;
-    std::shared_mutex mutex;
+    state_mutex mutex;
 };
 
 template<typename _Kty, typename _Ty>

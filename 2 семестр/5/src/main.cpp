@@ -1,18 +1,27 @@
 #include "cbst.hpp"
 #include "thread_poll.hpp"
 
+#pragma warning(disable : 26444)
+// Avoid unnamed objects with custom construction and destruction.
+
 #include <string>
 #include <iostream>
 
 constexpr auto MIN_OPS = 1;
-constexpr auto MAX_OPS = 5000;
+constexpr auto MAX_OPS = 10000;
 constexpr auto THREADS_NUM = 4U;
 constexpr auto MIN_KEY = 0;
-constexpr auto MAX_KEY = 10;
+constexpr auto MAX_KEY = 100;
 constexpr auto DATA_LENGTH = 5U;
 
-#pragma warning(disable : 26444)
-// Avoid unnamed objects with custom construction and destruction.
+template<typename _Kty, typename _Ty>
+void inserter(cbst<_Kty, _Ty>& cbst, int num_ops, [[maybe_unused]] std::mutex& mutex);
+
+template<typename _Kty, typename _Ty>
+void deleter(cbst<_Kty, _Ty>& cbst, int num_ops, [[maybe_unused]] std::mutex& mutex);
+
+template<typename _Kty, typename _Ty>
+void reader(cbst<_Kty, _Ty>& cbst, int num_ops, [[maybe_unused]] std::mutex& mutex);
 
 signed main()
 {
@@ -25,48 +34,11 @@ signed main()
 
 		thread_pool<std::function<void()>> tp(THREADS_NUM);
 		[[maybe_unused]] std::mutex mutex;
-		tp.add_job([&, num_ops]() mutable
-			{
-				while (num_ops--)
-				{
-					auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
-					auto&& data = generator::get_str(DATA_LENGTH);
-					cbst.insert(std::move(key), std::move(data));
+		tp.add_job([&, num_ops]() mutable { inserter(cbst, num_ops, mutex); });
+		tp.add_job([&, num_ops]() mutable { deleter(cbst, num_ops, mutex); });
+		tp.add_job([&, num_ops]() mutable { reader(cbst, num_ops, mutex); });
+		// tp.add_job([&, num_ops]() mutable { while (num_ops--) cbst.fix_to_key(generator::get_int(MIN_KEY, MAX_KEY)); });
 
-#ifdef _DEBUG
-					std::lock_guard lock(mutex);
-					std::cout << "{" << std::this_thread::get_id() << "} Insert " << key << " " << data << std::endl;
-#endif /* _DEBUG */
-				}
-			});
-		tp.add_job([&, num_ops]() mutable 
-			{
-				while (num_ops--)
-				{
-					auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
-					cbst.remove(std::move(key));
-
-#ifdef _DEBUG
-					std::lock_guard lock(mutex);
-					std::cout << "{" << std::this_thread::get_id() << "} Remove " << key << std::endl;
-#endif /* _DEBUG */
-				}
-			});
-		tp.add_job([&, num_ops]() mutable
-			{
-				while (num_ops--)
-				{
-					auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
-					auto&& [data, suc] = cbst.get(std::move(key));
-
-#ifdef _DEBUG
-					std::lock_guard lock(mutex);
-					std::cout << "{" << std::this_thread::get_id() << "} Get " << key << " " << std::boolalpha << suc << std::endl;
-#endif /* _DEBUG */
-				}
-			});
-		//tp.add_job([&, num_ops]() mutable { while (num_ops--) cbst.fix_to_key(generator::get_int(MIN_KEY, MAX_KEY)); });
-		
 		tp.wait_all();
 		
 		std::cout << cbst << std::endl;
@@ -77,4 +49,50 @@ signed main()
 	}
 
 	return 0;
+}
+
+template<typename _Kty, typename _Ty>
+void inserter(cbst<_Kty, _Ty>& cbst, int num_ops, [[maybe_unused]] std::mutex& mutex)
+{
+	while (num_ops--)
+	{
+		auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
+		auto&& data = generator::get_str(DATA_LENGTH);
+		[[maybe_unused]] bool res = cbst.insert(std::move(key), std::move(data));
+
+#ifdef _DEBUG
+		std::lock_guard lock(mutex);
+		std::cout << "{" << std::this_thread::get_id() << "} Insert " << key << " \"" << data << "\" " << std::boolalpha << res << std::endl;
+#endif /* _DEBUG */
+	}
+}
+
+template<typename _Kty, typename _Ty>
+void deleter(cbst<_Kty, _Ty>& cbst, int num_ops, [[maybe_unused]] std::mutex& mutex)
+{
+	while (num_ops--)
+	{
+		auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
+		[[maybe_unused]] bool res = cbst.remove(std::move(key));
+
+#ifdef _DEBUG
+		std::lock_guard lock(mutex);
+		std::cout << "{" << std::this_thread::get_id() << "} Remove " << key << " " << std::boolalpha << res << std::endl;
+#endif /* _DEBUG */
+	}
+}
+
+template<typename _Kty, typename _Ty>
+void reader(cbst<_Kty, _Ty>& cbst, int num_ops, [[maybe_unused]] std::mutex& mutex)
+{
+	while (num_ops--)
+	{
+		auto&& key = generator::get_int(MIN_KEY, MAX_KEY);
+		auto&& [data, suc] = cbst.get(std::move(key));
+
+#ifdef _DEBUG
+		std::lock_guard lock(mutex);
+		std::cout << "{" << std::this_thread::get_id() << "} Get " << key << " " << std::boolalpha << suc << std::endl;
+#endif /* _DEBUG */
+	}
 }
