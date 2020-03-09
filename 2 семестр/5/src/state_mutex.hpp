@@ -2,6 +2,7 @@
 
 #include <shared_mutex>
 #include <condition_variable>
+#include <atomic>
 
 class state_mutex
 {
@@ -73,11 +74,11 @@ public:
 	}
 
 private:
-	std::mutex m_lmtx;
-	std::condition_variable_any m_write_queue;
-	std::shared_mutex m_mutex;
-	bool m_has_wlock;
-	int m_readers;
+	std::mutex              m_lmtx;
+	std::condition_variable m_write_queue;
+	std::shared_mutex       m_mutex;
+	std::atomic_bool        m_has_wlock;
+	std::atomic_int         m_readers;
 };
 
 #pragma region r-lock
@@ -159,6 +160,11 @@ public:
 		m_mutex->wlock();
 	}
 
+	w_lock() noexcept :
+		m_mutex(nullptr),
+		m_owns(false)
+	{ }
+
 	w_lock(const w_lock& other) = delete;
 	
 	w_lock(w_lock&& other) noexcept :
@@ -190,6 +196,12 @@ public:
 		return *this;
 	}
 
+	void lock()
+	{
+		m_mutex->wlock();
+		m_owns = true;
+	}
+
 	void unlock()
 	{
 		m_mutex->wunlock();
@@ -219,6 +231,11 @@ public:
 		m_mutex->xlock();
 	}
 
+	x_lock() noexcept :
+		m_mutex(nullptr),
+		m_owns(false)
+	{ }
+
 	x_lock(const x_lock& other) = delete;
 
 	x_lock(x_lock&& other) noexcept :
@@ -238,7 +255,8 @@ public:
 		other.m_mutex = nullptr;
 		other.m_owns = false;
 
-		m_mutex->wlock_to_xlock();
+		if(m_mutex)
+			m_mutex->wlock_to_xlock();
 	}
 
 	~x_lock() noexcept
@@ -274,9 +292,16 @@ public:
 		other.m_mutex = nullptr;
 		other.m_owns = false;
 
-		m_mutex->wlock_to_xlock(); 
+		if(m_mutex)
+			m_mutex->wlock_to_xlock(); 
 
 		return *this;
+	}
+
+	void lock()
+	{
+		m_mutex->xlock();
+		m_owns = true;
 	}
 
 	void unlock()
