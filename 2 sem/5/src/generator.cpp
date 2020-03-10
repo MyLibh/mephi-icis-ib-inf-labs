@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 #include "generator.hpp"
 
 std::mt19937 generator::gen = std::mt19937(std::random_device()());

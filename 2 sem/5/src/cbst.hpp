@@ -347,21 +347,21 @@ private:
         auto ptr = key <= m_root->key ? m_root->left : m_root->right;
         while (!ptr->is_leaf())
         {
-            auto& tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
-            
             while (true)
             {
-                if (try_check_and_fix_cond1(ptr)          ||
-                    try_check_and_fix_cond2(ptr, tmp_ptr) ||
-                    try_check_and_fix_cond3(ptr, tmp_ptr) ||
-                    try_check_and_fix_cond4(ptr)          ||
-                    try_check_and_fix_cond5(ptr, tmp_ptr)
+                if (auto& tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
+                    try_check_and_fix_cond1(ptr)          ||
+                    //try_check_and_fix_cond2(ptr, tmp_ptr) ||
+                    //try_check_and_fix_cond3(ptr, tmp_ptr) ||
+                    try_check_and_fix_cond4(ptr) //         ||
+                    //try_check_and_fix_cond5(ptr, tmp_ptr)
                     )
                 {
                     ++viols_num;
 
                     continue;
                 }
+
                 break;
             }
             
