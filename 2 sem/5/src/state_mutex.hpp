@@ -7,77 +7,96 @@
 class state_mutex
 {
 private:
-	using lg = std::lock_guard<std::mutex>;
+	using ul = std::unique_lock<std::mutex>;
 
 public:
 	state_mutex() :
 		m_lmtx(),
 		m_write_queue(),
+		m_read_queue(),
 		m_mutex(),
 		m_has_wlock(false),
+		m_has_xlock(false),
 		m_readers(0)
 	{ }
 
 	void rlock()
 	{
-		lg lock(m_lmtx);
+		ul lock(m_lmtx);
+		m_read_queue.wait(lock, [&]() { return !(m_has_xlock); });
+
 		m_mutex.lock_shared();
-		m_readers++;
+		
+		++m_readers;
 	}
 
 	void runlock()
 	{
 		m_mutex.unlock_shared();
-		m_readers--;
+
+		if (!--m_readers)
+			m_write_queue.notify_one();
 	}
 
 	void wlock()
 	{
-		std::unique_lock<std::mutex> lock(m_lmtx);
-		m_write_queue.wait(lock, [&]() { return !(m_has_wlock || m_readers); });
+		ul lock(m_lmtx);
+		m_write_queue.wait(lock, [&]() { return !(m_readers || m_has_wlock || m_has_xlock); });
 
 		m_mutex.lock_shared();
-		m_readers++;
+
 		m_has_wlock = true;
 	}
 
 	void wunlock()
 	{
-		this->runlock();
+		m_mutex.unlock_shared();
+
 		m_has_wlock = false;
-		m_write_queue.notify_one();
+
+		m_write_queue.notify_all();
 	}
 
 	void xlock()
 	{
-		lg lock(m_lmtx);
-		m_has_wlock = true;
+		ul lock(m_lmtx);
+		m_write_queue.wait(lock, [&]() { return !(m_readers || m_has_wlock || m_has_xlock); });
+		
 		m_mutex.lock();
+
+		m_has_xlock = true;
 	}
 
 	void xunlock()
 	{
 		m_mutex.unlock();
-		m_has_wlock = false;
-		m_write_queue.notify_one(); // in case of upgrade
+
+		m_has_xlock = false;
+
+		m_write_queue.notify_one();
+		m_read_queue.notify_all();
 	}
 
 	void wlock_to_xlock()
 	{
-		lg lock(m_lmtx);
-		while (m_readers != 1);
+		ul lock(m_lmtx);
+		
+		while (m_readers);
 		
 		m_mutex.unlock_shared();
-		m_readers--;
-		//m_has_wlock = false;
 		m_mutex.lock();
+
+		m_has_wlock = false;
+		m_has_xlock = true;
 	}
 
 private:
 	std::mutex              m_lmtx;
 	std::condition_variable m_write_queue;
+	std::condition_variable m_read_queue;
 	std::shared_mutex       m_mutex;
 	std::atomic_bool        m_has_wlock;
+	std::atomic_bool        m_has_xlock;
 	std::atomic_int         m_readers;
 };
 

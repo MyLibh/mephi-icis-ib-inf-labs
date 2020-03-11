@@ -155,7 +155,8 @@ private:
         if (v->is_leaf())
             return false;
 
-        bool is_root = (v == m_root);
+        bool is_root = (v == parent);
+        bool result = false;
         { // LL
             w_lock p_wlock(parent->mutex);
             w_lock wlock;
@@ -170,7 +171,7 @@ private:
 
                 fix_cond2(parent, v, &node_t::left);
 
-                return true;
+                result = true;
             }
         }
 
@@ -188,7 +189,7 @@ private:
 
                 fix_cond2(parent, v, &node_t::right);
 
-                return true;
+                result = true;
             }
         }
 
@@ -200,7 +201,7 @@ private:
         if (v->is_leaf())
             return false;
 
-        bool is_root = (v == m_root);
+        bool is_root = (v == parent);
         bool result = false;
         if (!v->left->is_leaf()) // LR
         {
@@ -223,7 +224,7 @@ private:
             }
         }
 
-        if(!v->right->is_leaf()) // RL
+        if (!v->right->is_leaf()) // RL
         {
             w_lock p_wlock(parent->mutex);
             w_lock wlock;
@@ -271,7 +272,7 @@ private:
         if (v->is_leaf())
             return false;
 
-        bool is_root = (v == m_root);
+        bool is_root = (v == parent);
         bool result = false;
         if(!v->right->is_leaf())
         {
@@ -324,21 +325,18 @@ private:
 
     std::size_t try_rebalance_det(key_t&& key) noexcept
     {
+        if (w_lock wlock(m_root->mutex); m_root->is_leaf())
+            return { };
+
         std::size_t viols_num{};
         while(true) // root case balance
         {
-            if (try_check_and_fix_cond1(m_root)         ||
-                try_check_and_fix_cond2(m_root, m_root) ||
-                try_check_and_fix_cond3(m_root, m_root) ||
-                try_check_and_fix_cond4(m_root)         ||
-                try_check_and_fix_cond5(m_root, m_root)
-                ) 
-            { 
-                ++viols_num; 
-                
-                continue;
-            }
-
+            if (try_check_and_fix_cond1(m_root))         { ++viols_num; continue; } // Do not wanna think about changing m_root
+            if (try_check_and_fix_cond2(m_root, m_root)) { ++viols_num; continue; }
+            if (try_check_and_fix_cond3(m_root, m_root)) { ++viols_num; continue; }
+            if (try_check_and_fix_cond4(m_root))         { ++viols_num; continue; }
+            if (try_check_and_fix_cond5(m_root, m_root)) { ++viols_num; continue; }
+            
             break;
         }
 
@@ -349,18 +347,12 @@ private:
         {
             while (true)
             {
-                if (auto& tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
-                    try_check_and_fix_cond1(ptr)          ||
-                    //try_check_and_fix_cond2(ptr, tmp_ptr) ||
-                    //try_check_and_fix_cond3(ptr, tmp_ptr) ||
-                    try_check_and_fix_cond4(ptr) //         ||
-                    //try_check_and_fix_cond5(ptr, tmp_ptr)
-                    )
-                {
-                    ++viols_num;
-
-                    continue;
-                }
+                auto tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
+                if (try_check_and_fix_cond1(ptr))          { ++viols_num; continue; } // Do not wanna think about changing ptr/tmp_ptr
+                if (try_check_and_fix_cond2(ptr, tmp_ptr)) { ++viols_num; continue; }
+                if (try_check_and_fix_cond3(ptr, tmp_ptr)) { ++viols_num; continue; }
+                if (try_check_and_fix_cond4(ptr))          { ++viols_num; continue; }
+                if (try_check_and_fix_cond5(ptr, tmp_ptr)) { ++viols_num; continue; }
 
                 break;
             }
@@ -377,6 +369,9 @@ private:
 
     std::size_t try_rebalance_nondet(key_t&& key) noexcept
     {
+        if (w_lock wlock(m_root->mutex); m_root->is_leaf())
+            return { };
+
         std::size_t viols_num{};
         switch (auto cond = generator::get_int(1, 5); cond)
         {
@@ -392,7 +387,7 @@ private:
         auto ptr = key <= m_root->key ? m_root->left : m_root->right;
         while (!ptr->is_leaf())
         {
-            auto& tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
+            auto tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
 
             switch (auto cond = generator::get_int(1, 5); cond)
             {
@@ -508,12 +503,16 @@ inline bool cbst<_Kty, _Ty>::remove(key_t&& key) noexcept
         return false;
 
     auto dir = key <= parent->key ? &node_t::left : &node_t::right;
+    auto sibling = node_t::another(parent, dir);
+
+    w_lock wlock((*parent.*dir)->mutex);
+    w_lock sibling_wlock(sibling->mutex);
 
     x_lock parent_xlock(std::move(parent_wlock));
-    x_lock xlock((*parent.*dir)->mutex);
-
-    auto sibling = node_t::another(parent, dir);
-    x_lock sibling_xlock(sibling->mutex);
+    x_lock xlock(std::move(wlock));
+    x_lock sibling_xlock(std::move(sibling_wlock));
+    //x_lock xlock((*parent.*dir)->mutex);
+    //x_lock sibling_xlock(sibling->mutex);
 
     parent->key = std::move(sibling->key);
     parent->data = std::move(sibling->data);
