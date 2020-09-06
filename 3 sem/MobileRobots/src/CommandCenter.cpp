@@ -21,4 +21,9 @@ namespace MobileRobots
 
 		return m_manager != nullptr;
 	}
+
+	bool CommandCenter::aquireDevice()
+	{
+		return false;
+	}
 } // namespace MobileRobots

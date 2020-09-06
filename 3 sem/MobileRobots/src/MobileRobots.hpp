@@ -28,11 +28,13 @@ namespace MobileRobots
         inline static constexpr auto INFO_WIDTH{ 200U }; //-V112
 
     private:
+        void initWidgets();
+
+        void initMap();
+
         void loadImages();
 
         void updateInfo(const Coord& coord);
-
-        void showEvent(QShowEvent* event) override;
 
         void resizeEvent(QResizeEvent* event) override;
 
