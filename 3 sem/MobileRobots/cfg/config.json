@@ -1,0 +1,466 @@
+{
+	"width": 10,
+	"height": 10,
+	"objects": [
+		{
+			"type": "Barrier",
+			"x": 2,
+			"y": 1
+		},
+		{
+			"type": "Barrier",
+			"x": 3,
+			"y": 1
+		},
+		{
+			"type": "Barrier",
+			"x": 6,
+			"y": 1
+		},
+		{
+			"type": "Barrier",
+			"x": 7,
+			"y": 1
+		},
+		{
+			"type": "Barrier",
+			"x": 1,
+			"y": 2
+		},
+		{
+			"type": "Barrier",
+			"x": 8,
+			"y": 2
+		},
+		{
+			"type": "Barrier",
+			"x": 1,
+			"y": 3
+		},
+		{
+			"type": "Barrier",
+			"x": 3,
+			"y": 3
+		},
+		{
+			"type": "Barrier",
+			"x": 6,
+			"y": 3
+		},
+		{
+			"type": "Barrier",
+			"x": 8,
+			"y": 3
+		},
+		{
+			"type": "Barrier",
+			"x": 2,
+			"y": 8
+		},
+		{
+			"type": "Barrier",
+			"x": 3,
+			"y": 8
+		},
+		{
+			"type": "Barrier",
+			"x": 6,
+			"y": 8
+		},
+		{
+			"type": "Barrier",
+			"x": 7,
+			"y": 8
+		},
+		{
+			"type": "Barrier",
+			"x": 1,
+			"y": 7
+		},
+		{
+			"type": "Barrier",
+			"x": 8,
+			"y": 7
+		},
+		{
+			"type": "Barrier",
+			"x": 1,
+			"y": 6
+		},
+		{
+			"type": "Barrier",
+			"x": 3,
+			"y": 6
+		},
+		{
+			"type": "Barrier",
+			"x": 6,
+			"y": 6
+		},
+		{
+			"type": "Barrier",
+			"x": 8,
+			"y": 6
+		},
+		{
+			"type": "InterestingObject",
+			"x": 1,
+			"y": 1
+		},
+		{
+			"type": "InterestingObject",
+			"x": 1,
+			"y": 8
+		},
+		{
+			"type": "InterestingObject",
+			"x": 8,
+			"y": 8
+		},
+		{
+			"type": "InterestingObject",
+			"x": 8,
+			"y": 1
+		},
+		{
+			"type": "CommandCenter",
+			"x": 4,
+			"y": 4,
+			"description": "CommandCenterDescription",
+			"price": 2000,
+			"maxSlots": 5,
+			"powerUsage": 13,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 2,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 2,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 2,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 2,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "ManagerModule",
+					"radius": 50,
+					"maxDevices": 14,
+					"powerUsage": 12,
+					"priority": 1
+				}
+			]
+		},
+		{
+			"type": "CommandCenter",
+			"x": 4,
+			"y": 5,
+			"description": "CommandCenterDescription",
+			"price": 2000,
+			"maxSlots": 5,
+			"powerUsage": 13,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "ManagerModule",
+					"radius": 50,
+					"maxDevices": 14,
+					"powerUsage": 12,
+					"priority": 1
+				}
+			]
+		},
+		{
+			"type": "CommandCenter",
+			"x": 5,
+			"y": 5,
+			"description": "CommandCenterDescription",
+			"price": 2000,
+			"maxSlots": 5,
+			"powerUsage": 13,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "ManagerModule",
+					"radius": 50,
+					"maxDevices": 14,
+					"powerUsage": 12,
+					"priority": 1
+				}
+			]
+		},
+		{
+			"type": "CommandCenter",
+			"x": 5,
+			"y": 4,
+			"description": "CommandCenterDescription",
+			"price": 2000,
+			"maxSlots": 5,
+			"powerUsage": 13,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "ManagerModule",
+					"radius": 50,
+					"maxDevices": 14,
+					"powerUsage": 12,
+					"priority": 1
+				}
+			]
+		},
+		{
+			"type": "ObservationCenter",
+			"x": 2,
+			"y": 2,
+			"description": "ObservationCenterDescription",
+			"powerUsage": 10,
+			"price": 1000,
+			"maxSlots": 5,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 100
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				}
+			]
+		},
+		{
+			"type": "ObservationCenter",
+			"x": 2,
+			"y": 7,
+			"description": "ObservationCenterDescription",
+			"powerUsage": 10,
+			"price": 1000,
+			"maxSlots": 5,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 100
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				}
+			]
+		},
+		{
+			"type": "ObservationCenter",
+			"x": 7,
+			"y": 7,
+			"description": "ObservationCenterDescription",
+			"powerUsage": 10,
+			"price": 1000,
+			"maxSlots": 5,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 100
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				}
+			]
+		},
+		{
+			"type": "ObservationCenter",
+			"x": 7,
+			"y": 2,
+			"description": "ObservationCenterDescription",
+			"powerUsage": 10,
+			"price": 1000,
+			"maxSlots": 5,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 100
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				}
+			]
+		},
+		{
+			"type": "RobotScout",
+			"x": 5,
+			"y": 3,
+			"description": "RobotScoutDescription",
+			"powerUsage": 10,
+			"maxSlots": 5,
+			"price": 100,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 100
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				},
+				{
+					"type": "Sensor",
+					"radius": 8,
+					"direction": 0,
+					"angle": 3,
+					"powerUsage": 8
+				}
+			]
+		},
+		{
+			"type": "RobotCommander",
+			"x": 4,
+			"y": 6,
+			"description": "RobotCommanderDescription",
+			"powerUsage": 10,
+			"maxSlots": 5,
+			"price": 100,
+			"modules": [
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "PowerGenerator",
+					"priority": 1,
+					"powerSupplyLevel": 25
+				},
+				{
+					"type": "ManagerModule",
+					"radius": 50,
+					"maxDevices": 14,
+					"powerUsage": 12,
+					"priority": 1
+				}
+			]
+		}
+	]
+}

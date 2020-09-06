@@ -180,7 +180,7 @@ inline void graph_cli<_T>::gen()
 	auto n_dis = uid_t{ 1, N };
 	auto vertex_num = static_cast<std::size_t>(n_dis(gen));
 	
-	for (auto i{ 1U }; i <= vertex_num; ++i)
+	for (auto i{ 1LLU }; i <= vertex_num; ++i)
 	{
 		auto adj_num = n_dis(gen);
 		std::set<std::size_t> adj;
@@ -191,7 +191,7 @@ inline void graph_cli<_T>::gen()
 
 		auto v_dis = std::uniform_real_distribution<>{ -100, 100 };
 		auto vert = vertex<_T>{ static_cast<_T>(v_dis(gen)), static_cast<_T>(v_dis(gen)) };
-		m_graph->add_vertex(i, { i == 1 ? node<_T>::type::exit : node<_T>::type::deadlock, vert, adj });
+		m_graph->add_vertex(i, { i == 1LLU ? node<_T>::type::exit : node<_T>::type::deadlock, vert, adj });
 	}
 
 	save();

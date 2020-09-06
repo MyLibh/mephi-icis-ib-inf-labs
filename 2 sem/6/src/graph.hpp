@@ -154,7 +154,7 @@ inline void graph<_T>::find_way(const std::size_t index)
 				auto&& [x1, y1] = m_graph.at(cur).vertex;
 				auto&& [x2, y2] = m_graph.at(adj_v).vertex;
 
-				dist[adj_v] = dist[cur] + std::sqrt(std::pow(x1 - x1, 2) + std::pow(y1 - y2, 2));
+				dist[adj_v] = dist[cur] + static_cast<size_t>(std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2)));
 				dir[adj_v] = cur;
 			}
 	}

@@ -1,0 +1,20 @@
+<RCC>
+  <qresource>
+    <file>assets/images/command_center.png</file>
+    <file>assets/images/dark_barrier.png</file>
+    <file>assets/images/dark_grass.png</file>
+    <file>assets/images/dark_interesting_object.png</file>
+    <file>assets/images/light_barrier.png</file>
+    <file>assets/images/light_grass.png</file>
+    <file>assets/images/light_interesting_object.png</file>
+    <file>assets/images/observation_center.png</file>
+    <file>assets/images/robot_commander.png</file>
+    <file>assets/images/robot_scout.png</file>
+  </qresource>
+  <qresource>
+    <file>cfg/config.json</file>
+  </qresource>
+  <qresource>
+    <file>assets/icon.ico</file>
+  </qresource>
+</RCC>
