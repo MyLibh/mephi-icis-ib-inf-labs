@@ -49,7 +49,7 @@ namespace MobileRobots
             for (size_t j{}; j < size; ++j)
             {
                 m_map[i][j] = new QGraphicsPixmapItem(m_images["DarkGrass"]);
-                m_map[i][j]->setPos(i * m_scaleFactor, j * m_scaleFactor);
+                m_map[i][j]->setPos(i * static_cast<qreal>(m_scaleFactor), j * static_cast<qreal>(m_scaleFactor));
             }
         }
 
@@ -63,10 +63,10 @@ namespace MobileRobots
             for (auto&& obj : row)
                 m_scene->addItem(obj);
 
-        for (size_t x{}; x <= WIDTH; x += m_scaleFactor)
+        for (unsigned x{}; x <= WIDTH; x += m_scaleFactor)
             m_scene->addLine(x, 0, x, HEIGHT, QPen(Qt::black));
 
-        for (size_t y{}; y <= HEIGHT; y += m_scaleFactor)
+        for (unsigned y{}; y <= HEIGHT; y += m_scaleFactor)
             m_scene->addLine(0, y, WIDTH, y, QPen(Qt::black));
     }
 

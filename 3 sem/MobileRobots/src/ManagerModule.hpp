@@ -29,7 +29,7 @@ namespace MobileRobots
 		[[nodiscard]]
 		inline auto& getDevices() const noexcept { return m_devices; }
 
-		inline bool addDevice(std::shared_ptr<ObservationCenter> newDevice) { return (m_maxDevices < m_devices.size() && std::find(std::begin(m_devices), std::end(m_devices), newDevice) == std::end(m_devices)); }
+		inline bool addDevice(std::shared_ptr<ObservationCenter> newDevice) { return (static_cast<size_t>(m_maxDevices) < m_devices.size() && std::find(std::begin(m_devices), std::end(m_devices), newDevice) == std::end(m_devices)); }
 
 		bool isExplored(const Coord& coord) const noexcept;
 

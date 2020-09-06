@@ -34,7 +34,7 @@ namespace std
 	{
 		inline constexpr size_t operator()(const MobileRobots::Coord& coord) const
 		{
-			return (static_cast<size_t>(coord.x) << 32) | coord.y;
+			return (static_cast<size_t>(coord.x) << 32) | static_cast<size_t>(coord.y); //-V112
 		}
 	};
 }
