@@ -2,4 +2,4 @@
 
 ## Задание
 
-![task](res/task.pdf)
+![task](res/task.jpg)
