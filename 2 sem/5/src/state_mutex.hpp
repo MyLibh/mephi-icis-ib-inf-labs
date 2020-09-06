@@ -19,7 +19,7 @@ public:
 		m_has_xlock(false),
 		m_readers(0)
 	{ }
-
+	
 	void rlock()
 	{
 		ul lock(m_lmtx);
@@ -41,6 +41,7 @@ public:
 	void wlock()
 	{
 		ul lock(m_lmtx);
+		
 		m_write_queue.wait(lock, [&]() { return !(m_readers || m_has_wlock || m_has_xlock); });
 
 		m_mutex.lock_shared();
@@ -54,7 +55,7 @@ public:
 
 		m_has_wlock = false;
 
-		m_write_queue.notify_all();
+		m_write_queue.notify_one();
 	}
 
 	void xlock()
@@ -88,6 +89,21 @@ public:
 
 		m_has_wlock = false;
 		m_has_xlock = true;
+	}
+
+	void xlock_to_wlock()
+	{
+		{
+			ul lock(m_lmtx);
+
+			m_mutex.unlock();
+			m_mutex.lock_shared();
+
+			m_has_wlock = true;
+			m_has_xlock = false;
+		}	
+
+		m_read_queue.notify_all();
 	}
 
 private:
@@ -147,9 +163,17 @@ public:
 		return *this;
 	}
 
+	void lock()
+	{
+		m_mutex->rlock();
+
+		m_owns = true;
+	}
+
 	void unlock()
 	{
 		m_mutex->runlock();
+
 		m_owns = false;
 	}
 
@@ -215,15 +239,33 @@ public:
 		return *this;
 	}
 
+	w_lock& operator=(x_lock<_Mutex>&& other) noexcept
+	{
+		if (m_owns)
+			m_mutex->wunlock();
+
+		m_mutex = other.m_mutex;
+		m_owns = other.m_owns;
+		other.m_mutex = nullptr;
+		other.m_owns = false;
+
+		if (m_mutex)
+			m_mutex->xlock_to_wlock();
+
+		return *this;
+	}
+
 	void lock()
 	{
 		m_mutex->wlock();
+
 		m_owns = true;
 	}
 
 	void unlock()
 	{
 		m_mutex->wunlock();
+
 		m_owns = false;
 	}
 
@@ -241,6 +283,10 @@ class x_lock
 {
 public:
 	using mutex_type = _Mutex;
+
+private:
+	template<typename _Mutex>
+	friend class w_lock;
 
 public:
 	explicit x_lock(mutex_type& mutex) :
@@ -320,12 +366,14 @@ public:
 	void lock()
 	{
 		m_mutex->xlock();
+
 		m_owns = true;
 	}
 
 	void unlock()
 	{
 		m_mutex->xunlock();
+
 		m_owns = false;
 	}
 

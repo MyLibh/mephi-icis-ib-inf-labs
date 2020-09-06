@@ -128,12 +128,11 @@ private:
         fix_cond4(v);
     }
 
-    bool try_check_and_fix_cond1(ptr_node_t v) noexcept
+    bool try_check_and_fix_cond1(w_lock<state_mutex>& wlock, ptr_node_t v) noexcept
     {
         if (v->is_leaf())
             return false;
-
-        w_lock wlock(v->mutex);
+        
         w_lock l_wlock(v->left->mutex);
         w_lock r_wlock(v->right->mutex);
         if (check_cond1(v))
@@ -144,24 +143,27 @@ private:
 
             fix_cond1(v);
             
+            wlock = std::move(xlock);
+
             return true;
         }
 
         return false;
     }
 
-    bool try_check_and_fix_cond2(ptr_node_t parent, ptr_node_t v) noexcept
+    bool try_check_and_fix_cond2(w_lock<state_mutex>& p_wlock, ptr_node_t parent, ptr_node_t v) noexcept
     {
-        if (v->is_leaf())
+        if (parent->is_leaf())
             return false;
 
-        bool is_root = (v == parent);
-        bool result = false;
         { // LL
-            w_lock p_wlock(parent->mutex);
             w_lock wlock;
-            if (!is_root)
+            if (v != parent)
+            {
                 wlock = std::move(w_lock(v->mutex));
+                if (v->is_leaf())
+                    return false;
+            }
             w_lock l_wlock(v->left->mutex);
             if (check_cond2(v, &node_t::left))
             {
@@ -171,15 +173,20 @@ private:
 
                 fix_cond2(parent, v, &node_t::left);
 
-                result = true;
+                p_wlock = std::move(p_xlock);
+
+                return true;
             }
         }
 
         { // RR
-            w_lock p_wlock(parent->mutex);
             w_lock wlock;
-            if (!is_root)
+            if (v != parent)
+            {
                 wlock = std::move(w_lock(v->mutex));
+                if (v->is_leaf())
+                    return false;
+            }
             w_lock r_wlock(v->right->mutex);
             if (check_cond2(v, &node_t::right))
             {
@@ -189,27 +196,31 @@ private:
 
                 fix_cond2(parent, v, &node_t::right);
 
-                result = true;
+                p_wlock = std::move(p_xlock);
+
+                return true;
             }
         }
 
         return false;
     }
 
-    bool try_check_and_fix_cond3(ptr_node_t parent, ptr_node_t v) noexcept
+    bool try_check_and_fix_cond3(w_lock<state_mutex>& p_wlock, ptr_node_t parent, ptr_node_t v) noexcept
     {
-        if (v->is_leaf())
+        if (parent->is_leaf())
             return false;
 
-        bool is_root = (v == parent);
-        bool result = false;
-        if (!v->left->is_leaf()) // LR
-        {
-            w_lock p_wlock(parent->mutex);
+        { // LR
             w_lock wlock;
-            if (!is_root)
+            if (v != parent)
+            {
                 wlock = std::move(w_lock(v->mutex));
+                if (v->is_leaf())
+                    return false;
+            }
             w_lock l_wlock(v->left->mutex);
+            if (v->left->is_leaf())
+                return false;
             w_lock lr_wlock(v->left->right->mutex);
             if (check_cond3(v, &node_t::left))
             {
@@ -218,19 +229,25 @@ private:
                 x_lock l_xlock(std::move(l_wlock));
                 x_lock lr_xlock(std::move(lr_wlock));
 
-                fix_cond3(parent, v, &node_t::left);
+                //fix_cond3(parent, v, &node_t::left);
 
-                result = true;
+                p_wlock = std::move(p_xlock);
+
+                return true;
             }
         }
 
-        if (!v->right->is_leaf()) // RL
-        {
-            w_lock p_wlock(parent->mutex);
+        /*{ // RL
             w_lock wlock;
-            if (!is_root)
+            if (v != parent)
+            {
                 wlock = std::move(w_lock(v->mutex));
+                if (v->is_leaf())
+                    return false;
+            }
             w_lock r_wlock(v->right->mutex);
+            if (v->right->is_leaf())
+                return false;
             w_lock rl_wlock(v->right->left->mutex);
             if (check_cond3(v, &node_t::right))
             {
@@ -241,16 +258,20 @@ private:
 
                 fix_cond3(parent, v, &node_t::right);
 
-                result = true;
-            }
-        }
+                p_wlock = std::move(p_xlock);
 
-        return result;
+                return true;
+            }
+        }*/
+
+        return false;
     }
 
-    bool try_check_and_fix_cond4(ptr_node_t v) noexcept
+    bool try_check_and_fix_cond4(w_lock<state_mutex>& wlock, ptr_node_t v) noexcept
     {
-        w_lock wlock(v->mutex);
+        if (v->is_leaf())
+            return false;
+     
         w_lock l_wlock(v->left->mutex);
         w_lock r_wlock(v->right->mutex);
         if (check_cond4(v))
@@ -261,27 +282,31 @@ private:
 
             fix_cond4(v);
 
+            wlock = std::move(xlock);
+
             return true;
         }
 
         return false;
     }
 
-    bool try_check_and_fix_cond5(ptr_node_t parent, ptr_node_t v) noexcept
+    bool try_check_and_fix_cond5(w_lock<state_mutex>& p_wlock, ptr_node_t parent, ptr_node_t v) noexcept
     {
-        if (v->is_leaf())
+        if (parent->is_leaf())
             return false;
 
-        bool is_root = (v == parent);
-        bool result = false;
-        if(!v->right->is_leaf())
         {
-            w_lock p_wlock(parent->mutex);
             w_lock wlock;
-            if (!is_root)
+            if (v != parent)
+            {
                 wlock = std::move(w_lock(v->mutex));
+                if (v->is_leaf())
+                    return false;
+            }
             w_lock l_wlock(v->left->mutex);
             w_lock r_wlock(v->right->mutex);
+            if (v->right->is_leaf())
+                return false;
             w_lock rl_wlock(v->right->left->mutex);
             if (check_cond5(v, &node_t::left))
             {
@@ -293,18 +318,24 @@ private:
 
                 fix_cond5(parent, v, &node_t::left);
 
-                result = true;
+                p_wlock = std::move(p_xlock);
+
+                return true;
             }
         }
 
-        if (!v->left->is_leaf())
         {
-            w_lock p_wlock(parent->mutex);
             w_lock wlock;
-            if (!is_root)
+            if (v != parent)
+            {
                 wlock = std::move(w_lock(v->mutex));
+                if (v->is_leaf())
+                    return false;
+            }
             w_lock l_wlock(v->left->mutex);
             w_lock r_wlock(v->right->mutex);
+            if (v->left->is_leaf())
+                return false;
             w_lock lr_wlock(v->left->right->mutex);
             if (check_cond5(v, &node_t::right))
             {
@@ -316,43 +347,34 @@ private:
 
                 fix_cond5(parent, v, &node_t::right);
 
-                result = true;
+                p_wlock = std::move(p_xlock);
+
+                return true;
             }
         }
 
-        return result;
+        return false;
     }
 
     std::size_t try_rebalance_det(key_t&& key) noexcept
     {
-        if (w_lock wlock(m_root->mutex); m_root->is_leaf())
+        w_lock parent_wlock(m_root->mutex);
+        if (m_root->is_leaf())
             return { };
 
         std::size_t viols_num{};
-        while(true) // root case balance
-        {
-            if (try_check_and_fix_cond1(m_root))         { ++viols_num; continue; } // Do not wanna think about changing m_root
-            if (try_check_and_fix_cond2(m_root, m_root)) { ++viols_num; continue; }
-            if (try_check_and_fix_cond3(m_root, m_root)) { ++viols_num; continue; }
-            if (try_check_and_fix_cond4(m_root))         { ++viols_num; continue; }
-            if (try_check_and_fix_cond5(m_root, m_root)) { ++viols_num; continue; }
-            
-            break;
-        }
 
-        w_lock parent_wlock(m_root->mutex);
         auto parent = m_root;
         auto ptr = key <= m_root->key ? m_root->left : m_root->right;
         while (!ptr->is_leaf())
         {
             while (true)
             {
-                auto tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
-                if (try_check_and_fix_cond1(ptr))          { ++viols_num; continue; } // Do not wanna think about changing ptr/tmp_ptr
-                if (try_check_and_fix_cond2(ptr, tmp_ptr)) { ++viols_num; continue; }
-                if (try_check_and_fix_cond3(ptr, tmp_ptr)) { ++viols_num; continue; }
-                if (try_check_and_fix_cond4(ptr))          { ++viols_num; continue; }
-                if (try_check_and_fix_cond5(ptr, tmp_ptr)) { ++viols_num; continue; }
+                //if (try_check_and_fix_cond1(parent_wlock, parent)) { ++viols_num; continue; } // Do not wanna think about changing ptr/tmp_ptr
+                if (try_check_and_fix_cond2(parent_wlock, parent, ptr)) { ++viols_num; continue; }
+                //if (try_check_and_fix_cond3(parent_wlock, parent, ptr)) { ++viols_num; continue; }
+                //if (try_check_and_fix_cond4(parent_wlock, parent)) { ++viols_num; continue; }
+                //if (try_check_and_fix_cond5(parent_wlock, parent, ptr)) { ++viols_num; continue; }
 
                 break;
             }
@@ -369,7 +391,7 @@ private:
 
     std::size_t try_rebalance_nondet(key_t&& key) noexcept
     {
-        if (w_lock wlock(m_root->mutex); m_root->is_leaf())
+       /* if (w_lock wlock(m_root->mutex); m_root->is_leaf())
             return { };
 
         std::size_t viols_num{};
@@ -403,9 +425,9 @@ private:
             parent = ptr;
             if(!ptr->is_leaf())
                 ptr = key <= ptr->key ? ptr->left : ptr->right;
-        }
+        }*/
 
-        return viols_num;
+        return 0;//viols_num;
     }
 
 public:
@@ -491,32 +513,37 @@ inline bool cbst<_Kty, _Ty>::remove(key_t&& key) noexcept
     auto ptr = key <= m_root->key ? m_root->left : m_root->right;
     while (!ptr->is_leaf())
     {
-        auto& tmp_ptr = key <= ptr->key ? ptr->left : ptr->right;
+        w_lock tmp_wlock(ptr->mutex);
+        if (!ptr->is_leaf())
+        {
+            parent_wlock = std::move(tmp_wlock);
 
-        parent_wlock = std::move(w_lock(ptr->mutex));
-
-        parent = ptr;
-        ptr = tmp_ptr;
+            parent = ptr;
+            ptr = key <= ptr->key ? ptr->left : ptr->right;
+        }
     }
 
     if (key != ptr->key)
         return false;
 
-    auto dir = key <= parent->key ? &node_t::left : &node_t::right;
-    auto sibling = node_t::another(parent, dir);
-
-    w_lock wlock((*parent.*dir)->mutex);
-    w_lock sibling_wlock(sibling->mutex);
+    ptr = nullptr; // Remove reference
+    
+    // Do not acquire w_lock for parent childs due to implementation of xlock
 
     x_lock parent_xlock(std::move(parent_wlock));
-    x_lock xlock(std::move(wlock));
-    x_lock sibling_xlock(std::move(sibling_wlock));
-    //x_lock xlock((*parent.*dir)->mutex);
-    //x_lock sibling_xlock(sibling->mutex);
+
+    x_lock l_xlock(parent->left->mutex);
+    x_lock r_xlock(parent->right->mutex);
+
+    auto dir = key > parent->key ? &node_t::left : &node_t::right; // Sibling
+    auto sibling = *parent.*dir;
 
     parent->key = std::move(sibling->key);
     parent->data = std::move(sibling->data);
     parent->weight += sibling->weight;
+    
+    l_xlock.unlock(); // To make sure xlocks free mutexes before deleting dat nodes
+    r_xlock.unlock();
     parent->left = nullptr;
     parent->right = nullptr;
 
