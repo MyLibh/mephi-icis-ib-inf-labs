@@ -12,6 +12,7 @@
     <file>assets/images/robot_scout.png</file>
   </qresource>
   <qresource>
+    <file>cfg/empty_map.json</file>
     <file>cfg/config.json</file>
   </qresource>
   <qresource>

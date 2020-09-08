@@ -4,6 +4,7 @@
 #include "ObservationCenter.hpp"
 #include "PowerGenerator.hpp"
 #include "Sensor.hpp"
+#include "EnvironmentDescriptor.hpp"
 
 #include <typeinfo>
 #include <algorithm>
@@ -45,15 +46,15 @@ namespace MobileRobots
         return std::move(str);
     }
 
-    std::map<Coord, std::weak_ptr<MapObject>> ObservationCenter::getObjectsAround() const
+    std::map<Coord, std::shared_ptr<MapObject>> ObservationCenter::getObjectsAround() const
     {
-        std::map<Coord, std::weak_ptr<MapObject>> objectsAround;
+        std::map<Coord, std::shared_ptr<MapObject>> objectsAround;
         for (const auto& module : m_modules)
             if (typeid(*module) == typeid(Sensor))
             {
                 auto sensor{ std::dynamic_pointer_cast<Sensor>(module) };
 
-                // TODO: check surroundings
+                // TODO: check in sector
             }
 
         return std::move(objectsAround);

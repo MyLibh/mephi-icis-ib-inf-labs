@@ -52,6 +52,9 @@
     <Filter Include="Source Files\Utility">
       <UniqueIdentifier>{26d4c744-fa9f-4e50-a364-7b4ad4cec85e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AI">
+      <UniqueIdentifier>{231fa5d9-6850-463e-b6e0-50435c199bd0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="MobileRobots.qrc">
@@ -91,6 +94,12 @@
     </ClCompile>
     <ClCompile Include="src\Utility.cpp">
       <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RobotScout.cpp">
+      <Filter>Source Files\Map\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AI.cpp">
+      <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +154,9 @@
     <ClInclude Include="src\Coord.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="src\Route.hpp">
+      <Filter>Header Files\Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\MobileRobots.hpp">
@@ -153,6 +165,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cfg\config.json">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="cfg\empty_map.json">
       <Filter>Config</Filter>
     </None>
   </ItemGroup>

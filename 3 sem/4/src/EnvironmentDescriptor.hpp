@@ -33,7 +33,7 @@ namespace MobileRobots
 		inline const auto& getObjects() const noexcept { return m_objects; }
 
 		[[nodiscard]]
-		const std::shared_ptr<MapObject> getObject(const Coord& coord) const noexcept;
+		std::shared_ptr<MapObject> getObject(const Coord& coord) const noexcept;
 
 		inline constexpr void setWidth(const unsigned width) noexcept { m_width = width; }
 

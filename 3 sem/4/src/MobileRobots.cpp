@@ -129,7 +129,7 @@ namespace MobileRobots
     MobileRobots::MobileRobots(QWidget* parent /* = nullptr */) :
         QMainWindow(parent),
         m_ui(std::make_unique<Ui::MobileRobotsClass>()),
-        m_envDescr(MapLoader::load(QString(":/cfg/config.json"))),
+        m_envDescr(MapLoader::load(QString(":/cfg/empty_map.json"))),
         m_ai(std::make_shared<AI>(m_envDescr)),
         m_timer(std::make_unique<QTimer>(this)),
         m_scene(),
@@ -150,18 +150,17 @@ namespace MobileRobots
 
     void MobileRobots::draw() const
     {
-        for (auto&& row : m_map)
-            for (auto tile : row)
-                tile->setPixmap(m_images.at("DarkGrass"));
+        for (uint32_t i{}; i < m_map.size(); ++i)
+            for (uint32_t j{}; j < m_map[0].size(); ++j)
+                m_map[i][j]->setPixmap(m_images.at(m_ai->isExplored({ i, j }) ? "LightGrass" : "DarkGrass"));
 
-        auto objects = m_envDescr->getObjects();
-        for (const auto& object : objects)
+        for (const auto& object : m_envDescr->getObjects())
         {
             std::string name;
             if (const auto& id = typeid(*object); id == typeid(Barrier))
-                name = "DarkBarrier";
+                name = m_ai->isExplored(object->getPos()) ? "LightBarrier" : "DarkBarrier";
             else if (id == typeid(InterestingObject))
-                name = "DarkInterestingObject";
+                name = m_ai->isExplored(object->getPos()) ? "LightInterestingObject" : "DarkInterestingObject";
             else if (id == typeid(RobotScout))
                 name = "RobotScout";
             else if (id == typeid(RobotCommander))
@@ -174,13 +173,11 @@ namespace MobileRobots
             if (!name.empty())
                 m_map[object->getX()][object->getY()]->setPixmap(m_images.at(name));
         }
-            
-        // TODO: draw explored
     }
 
     void MobileRobots::update()
     {
-        // TODO: Implement steps
+        m_ai->work();
 
         draw();
     }

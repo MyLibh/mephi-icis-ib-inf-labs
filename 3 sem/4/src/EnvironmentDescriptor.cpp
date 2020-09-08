@@ -5,7 +5,7 @@
 
 namespace MobileRobots
 {
-    const std::shared_ptr<MapObject> EnvironmentDescriptor::getObject(const Coord& coord) const noexcept
+    std::shared_ptr<MapObject> EnvironmentDescriptor::getObject(const Coord& coord) const noexcept
     {
         // TODO: cache on each step in unordered map
 

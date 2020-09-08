@@ -51,7 +51,7 @@ namespace MobileRobots
 		inline auto getOwner() const noexcept { return m_owner; }
 
 		[[nodiscard]]
-		std::map<Coord, std::weak_ptr<MapObject>> getObjectsAround() const;
+		virtual std::map<Coord, std::shared_ptr<MapObject>> getObjectsAround() const;
 
 		void setOwner(std::shared_ptr<MapObject> owner) noexcept { m_owner = std::dynamic_pointer_cast<ObservationCenter>(owner); }
 

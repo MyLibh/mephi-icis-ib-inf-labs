@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AI.cpp" />
     <ClCompile Include="src\CommandCenter.cpp" />
     <ClCompile Include="src\EnvironmentDescriptor.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -100,6 +101,7 @@
     <ClCompile Include="src\MobileRobots.cpp" />
     <ClCompile Include="src\ObservationCenter.cpp" />
     <ClCompile Include="src\RobotCommander.cpp" />
+    <ClCompile Include="src\RobotScout.cpp" />
     <ClCompile Include="src\Utility.cpp" />
     <QtRcc Include="MobileRobots.qrc" />
     <QtUic Include="MobileRobots.ui" />
@@ -116,6 +118,7 @@
     <ClInclude Include="src\MapLoader.hpp" />
     <ClInclude Include="src\MapObject.hpp" />
     <ClInclude Include="src\RobotCommander.hpp" />
+    <ClInclude Include="src\Route.hpp" />
     <ClInclude Include="src\Utility.hpp" />
     <QtMoc Include="src\MobileRobots.hpp" />
     <ClInclude Include="src\Module.hpp" />
@@ -126,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cfg\config.json" />
+    <None Include="cfg\empty_map.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

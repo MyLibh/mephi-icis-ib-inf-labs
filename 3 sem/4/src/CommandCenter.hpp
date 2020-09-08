@@ -8,13 +8,16 @@ namespace MobileRobots
 {
 	class CommandCenter : virtual public ObservationCenter
 	{
+	private:
+		bool aquireManager() noexcept;
+
 	public:
 		CommandCenter() = delete;
 
 		CommandCenter(const std::string_view description, const unsigned powerUsage, const unsigned maxSlots, const unsigned price, const std::vector<std::shared_ptr<Module>>& modules, const Coord& coord) :
 			ObservationCenter(description, powerUsage, maxSlots, price, modules, coord),
 			m_manager()
-		{ }
+		{ aquireManager(); }
 
 		inline virtual ~CommandCenter() noexcept override = default;
 
@@ -23,12 +26,11 @@ namespace MobileRobots
 		[[nodiscard]]
 		inline auto getManager() const noexcept { return m_manager; }
 
-		bool aquireManager() noexcept;
-
 		bool aquireDevice();
 
 	protected:
 		std::shared_ptr<ManagerModule> m_manager;
+		
 	};
 } // namespace MobileRobots
 
