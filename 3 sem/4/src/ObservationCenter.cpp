@@ -30,6 +30,8 @@ namespace MobileRobots
 
                 powerUsageSum -= std::dynamic_pointer_cast<EnergyConsumer>(m_modules[i])->getPowerUsage();
             }
+
+        // TODO: check bad conditions
     }
 
     QString ObservationCenter::toStringHelper(const QString& type) const
@@ -40,12 +42,12 @@ namespace MobileRobots
         for (const auto& module : m_modules)
             str.append(module->toString() + "<br/>");
 
-        return str;
+        return std::move(str);
     }
 
-    std::map<Coord, MapObject*> ObservationCenter::getObjectsAround() const
+    std::map<Coord, std::weak_ptr<MapObject>> ObservationCenter::getObjectsAround() const
     {
-        std::map<Coord, MapObject*> objectsAround;
+        std::map<Coord, std::weak_ptr<MapObject>> objectsAround;
         for (const auto& module : m_modules)
             if (typeid(*module) == typeid(Sensor))
             {
@@ -54,6 +56,6 @@ namespace MobileRobots
                 // TODO: check surroundings
             }
 
-        return objectsAround;
+        return std::move(objectsAround);
     }
 }

@@ -6,12 +6,9 @@
 
 #include <QtWidgets/QApplication>
 
-#include <iostream>
-
 signed main(int argc, char* argv[])
 {
     int rc{};
-
     try
     {
         QApplication app(argc, argv);
@@ -24,10 +21,14 @@ signed main(int argc, char* argv[])
     catch (const std::exception& e)
     {
         MobileRobots::Utility::showError(e.what());
+
+        return -1;
     }
     catch (...)
     {
         MobileRobots::Utility::showError("Unknown exception");
+
+        return -1;
     }
 
     return rc;

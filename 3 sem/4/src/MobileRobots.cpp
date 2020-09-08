@@ -144,6 +144,8 @@ namespace MobileRobots
         m_timer->start(1000);
 
         ManagerModule::setAI(m_ai->shared_from_this());
+
+        draw();
     }
 
     void MobileRobots::draw() const

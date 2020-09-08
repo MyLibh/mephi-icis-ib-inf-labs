@@ -17,7 +17,7 @@ namespace MobileRobots
 		static void setEnvironmentDescriptor(std::shared_ptr<EnvironmentDescriptor> envDesc) noexcept;
 
 	protected:
-		inline virtual QString toStringHelper(const QString& type) const { return QString("<b>x:</b> %1<br/><b>y:</b> %2<br/><b>type:</b> %3<br/>").arg(m_pos.x).arg(m_pos.y).arg(type); }
+		inline virtual QString toStringHelper(const QString& type) const { return std::move(QString("<b>x:</b> %1<br/><b>y:</b> %2<br/><b>type:</b> %3<br/>").arg(m_pos.x).arg(m_pos.y).arg(type)); }
 
 	public:
 		inline constexpr MapObject() noexcept :

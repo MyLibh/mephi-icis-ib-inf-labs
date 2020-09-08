@@ -39,39 +39,14 @@ namespace MobileRobots
 
 		inline constexpr void setHeight(const unsigned height) noexcept { m_height = height; }
 
-		template<typename _ObjectType>
-		inline void addObject(const Coord& coord);
-
-		template<typename _ObjectType>
-		inline void addObject(const std::string_view description, const unsigned powerUsage, const unsigned maxSlots, const unsigned price, const std::vector<std::shared_ptr<Module>>& modules, const Coord& coord);
+		template<typename _ObjectType, typename ..._Args, typename = std::enable_if_t<std::is_base_of_v<MapObject, _ObjectType>>>
+		inline void addObject(_Args&&... args) { m_objects.push_back(std::make_shared<_ObjectType>(std::forward<_Args>(args)...)); }
 
 	private:
 		unsigned                                m_width;
 		unsigned                                m_height;
 		std::vector<std::shared_ptr<MapObject>> m_objects;
 	};
-
-	template<typename _ObjectType>
-	inline void EnvironmentDescriptor::addObject(const Coord& coord)
-	{
-		if constexpr (std::is_same_v<_ObjectType, Barrier>)
-			m_objects.push_back(std::make_shared<Barrier>(coord));
-		else if constexpr (std::is_same_v<_ObjectType, InterestingObject>)
-			m_objects.push_back(std::make_shared<InterestingObject>(coord));
-	}
-	
-	template<typename _ObjectType>
-	inline void EnvironmentDescriptor::addObject(const std::string_view description, const unsigned powerUsage, const unsigned maxSlots, const unsigned price, const std::vector<std::shared_ptr<Module>>& modules, const Coord& coord)
-	{
-		if constexpr (std::is_same_v<_ObjectType, RobotScout>)
-			m_objects.push_back(std::make_shared<RobotScout>(description, powerUsage, maxSlots, price, modules, coord));
-		else if constexpr (std::is_same_v<_ObjectType, RobotCommander>)
-			m_objects.push_back(std::make_shared<RobotCommander>(description, powerUsage, maxSlots, price, modules, coord));
-		else if constexpr (std::is_same_v<_ObjectType, ObservationCenter>)
-			m_objects.push_back(std::make_shared<ObservationCenter>(description, powerUsage, maxSlots, price, modules, coord));
-		else if constexpr (std::is_same_v<_ObjectType, CommandCenter>)
-			m_objects.push_back(std::make_shared<CommandCenter>(description, powerUsage, maxSlots, price, modules, coord));
-	}
 } // namespace MobileRobots
 
 #endif /* !__ENVIRONMENT_DESCRIPTOR_HPP_INCLUDED__ */

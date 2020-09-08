@@ -43,17 +43,17 @@ namespace detail
                 modules.push_back(loadModule(item.toObject()));
 
             if (const auto&& type = loadString("type"); type == "Barrier")
-                envDescr->addObject<Barrier>({ loadUInt("x"), loadUInt("y") });
+                envDescr->addObject<Barrier>(Coord{ loadUInt("x"), loadUInt("y") });
             else if (type == "InterestingObject")
-                envDescr->addObject<InterestingObject>({ loadUInt("x"), loadUInt("y") });
+                envDescr->addObject<InterestingObject>(Coord{ loadUInt("x"), loadUInt("y") });
             else if (type == "RobotScout")
-                envDescr->addObject<RobotScout>(loadString("description").toStdString(), loadUInt("powerUsage"), loadUInt("maxSlots"), loadUInt("price"), modules, { loadUInt("x"), loadUInt("y") });
+                envDescr->addObject<RobotScout>(loadString("description").toStdString(), loadUInt("powerUsage"), loadUInt("maxSlots"), loadUInt("price"), modules, Coord{ loadUInt("x"), loadUInt("y") });
             else if (type == "RobotCommander")
-                envDescr->addObject<RobotCommander>(loadString("description").toStdString(), loadUInt("powerUsage"), loadUInt("maxSlots"), loadUInt("price"), modules, { loadUInt("x"), loadUInt("y") });
+                envDescr->addObject<RobotCommander>(loadString("description").toStdString(), loadUInt("powerUsage"), loadUInt("maxSlots"), loadUInt("price"), modules, Coord{ loadUInt("x"), loadUInt("y") });
             else if (type == "ObservationCenter")
-                envDescr->addObject<ObservationCenter>(loadString("description").toStdString(), loadUInt("powerUsage"), loadUInt("maxSlots"), loadUInt("price"), modules, { loadUInt("x"), loadUInt("y") });
+                envDescr->addObject<ObservationCenter>(loadString("description").toStdString(), loadUInt("powerUsage"), loadUInt("maxSlots"), loadUInt("price"), modules, Coord{ loadUInt("x"), loadUInt("y") });
             else if (type == "CommandCenter")
-                envDescr->addObject<CommandCenter>(loadString("description").toStdString(), loadUInt("powerUsage"), loadUInt("maxSlots"), loadUInt("price"), modules, { loadUInt("x"), loadUInt("y") });
+                envDescr->addObject<CommandCenter>(loadString("description").toStdString(), loadUInt("powerUsage"), loadUInt("maxSlots"), loadUInt("price"), modules, Coord{ loadUInt("x"), loadUInt("y") });
         }
     }
 
@@ -83,5 +83,5 @@ std::shared_ptr<MobileRobots::EnvironmentDescriptor> MobileRobots::MapLoader::lo
 
     detail::loadObjects(json.value(QString("objects")).toArray(), envDescr);
 
-    return envDescr;
+    return std::move(envDescr);
 }
