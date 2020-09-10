@@ -4,4 +4,7 @@ x64/
 x86/
 .vs/
 
+
 *.user
+bin/
+packages/

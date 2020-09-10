@@ -23,7 +23,7 @@ public:
 	inline DiceGroup(const DiceGroup& other) :
 		m_size(other.m_size),
 		m_capacity(m_size),
-		m_dices(std::make_unique<uchar_t[]>(m_size))
+		m_dices(std::make_unique<uchar_t[]>(m_capacity))
 	{ std::memcpy(m_dices.get(), other.m_dices.get(), other.m_size * sizeof(uchar_t)); }
 
 	inline DiceGroup(DiceGroup&& other) noexcept : 
@@ -33,7 +33,7 @@ public:
 	inline DiceGroup(const size_t size) :
 		m_size(size),
 		m_capacity(m_size),
-		m_dices(std::make_unique<uchar_t[]>(m_size))
+		m_dices(std::make_unique<uchar_t[]>(m_capacity))
 	{ roll(); }
 
 	inline DiceGroup(const size_t size, std::unique_ptr<uchar_t[]> dices) :
