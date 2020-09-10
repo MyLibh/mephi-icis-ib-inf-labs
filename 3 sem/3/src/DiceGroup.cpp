@@ -18,7 +18,7 @@ DiceGroup& DiceGroup::operator+=(const uchar_t value)
 	if (!m_capacity)
 		resize(1);
 	else if (m_size == m_capacity)
-		resize(2 * m_size);
+		resize(2 * m_capacity);
 
 	m_dices[m_size++] = value;
 
@@ -29,7 +29,10 @@ DiceGroup& DiceGroup::operator-=(const uchar_t value) noexcept
 {
 	for (size_t i{}; i < m_size; ++i)
 		if (m_dices[i] == value)
+		{
 			std::swap(m_dices[i], m_dices[--m_size]);
+			--i; // Yeah :)
+		}
 
 	return *this;
 }
