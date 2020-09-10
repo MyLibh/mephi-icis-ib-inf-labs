@@ -1,14 +1,16 @@
 #ifndef __ELLIPSE_HPP_INCLUDED__
 #define __ELLIPSE_HPP_INCLUDED__
 
-#define _USE_MATH_DEFINES
-#include <cmath>
 #include <numeric>
 #include <algorithm>
 
+#ifndef M_PI
+	#define M_PI 3.14159265358979323846
+#endif /* !M_PI */
+
 namespace detail
 {
-	static constexpr double _vectorcall sqrtNewtonRaphson(double x, double cur, double prev) noexcept
+	static constexpr double __vectorcall sqrtNewtonRaphson(double x, double cur, double prev) noexcept
 	{
 		return cur == prev ? 
 			cur : 
@@ -42,13 +44,18 @@ public:
 	inline constexpr double getB() const noexcept { return m_b; }
 
 	[[nodiscard]]
-	inline constexpr double getC() const noexcept { return detail::sqrt(detail::sqr(m_a) - detail::sqr(m_b)); }
+	inline constexpr double getC() const noexcept { return detail::sqrt(detail::sqr(std::max(m_a, m_b)) - detail::sqr(std::min(m_a, m_b))); }
 
 	[[nodiscard]]
-	inline constexpr double getEccentricity() const noexcept { return getC() / m_a; }
+	inline constexpr double getEccentricity() const noexcept { return getC() / std::max(m_a, m_b); }
 
 	[[nodiscard]]
-	inline constexpr double getLength() const noexcept { return 4 * (M_PI * m_a * m_b + (m_a - m_b)) / (m_a + m_b); }
+	inline constexpr double getLength() const noexcept
+	{
+		auto t = 3 * detail::sqr((m_a - m_b) / (m_a + m_b));
+
+		return M_PI * (m_a + m_b) * (1 + t / (10 + detail::sqrt(4 - t)));
+	}
 
 	[[nodiscard]]
 	inline constexpr double getArea() const noexcept { return M_PI * m_a * m_b; }
@@ -56,17 +63,16 @@ public:
 	[[nodiscard]]
 	inline constexpr auto getMinMaxDistToFoci(const double x, const double y) const noexcept 
 	{
-		auto c = getC();
-		auto d1 = detail::sqrt(detail::sqrt(x - c) + detail::sqr(y));
-		auto d2 = detail::sqrt(detail::sqrt(x + c) + detail::sqr(y));
-
-		return std::minmax(d1, d2);
+		if (auto c = getC(); m_a > m_b)
+			return std::minmax(detail::sqrt(detail::sqr(x - c) + detail::sqr(y)), detail::sqrt(detail::sqr(x + c) + detail::sqr(y)));
+		else
+			return std::minmax(detail::sqrt(detail::sqr(x) + detail::sqr(y - c)), detail::sqrt(detail::sqr(x) + detail::sqr(y + c)));
 	}
 
 	[[nodiscard]]
 	inline constexpr std::pair<double, double> getCartesianY(const double x) const noexcept 
 	{ 
-		auto sqrtY{ detail::sqr(m_b) * detail::sqrt((1 - detail::sqr(x) / detail::sqr(m_a))) };
+		auto sqrtY{ detail::sqrt(detail::sqr(m_b) * detail::sqrt((1 - detail::sqr(x) / detail::sqr(m_a)))) };
 		
 		return { -sqrtY, +sqrtY };
 	}
