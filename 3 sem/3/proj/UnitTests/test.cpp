@@ -11,8 +11,6 @@ struct DiceGroupTest : testing::Test
 	{ }
 };
 
-
-
 TEST_F(DiceGroupTest, AddDice)
 {
 	*dg += 5;
