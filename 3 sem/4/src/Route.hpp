@@ -12,8 +12,9 @@ namespace MobileRobots
 	public:
 		Route() = delete;
 
-		inline Route(std::queue<Coord> path) noexcept :
-			m_path(std::move(path))
+		inline Route(std::queue<Coord> path) noexcept : // CHECK: contract to non-empty queue
+			m_path(std::move(path)),
+			m_to(m_path.back())
 		{ }
 
 		[[nodiscard]]
@@ -30,10 +31,14 @@ namespace MobileRobots
 			return { -1U, -1U }; // Fly away, bitch
 		}
 
+		[[nodiscard]]
+		inline auto to() const noexcept { return m_to; }
+
 		inline bool isFinished() const noexcept { return m_path.empty(); }
 
 	private:
 		std::queue<Coord> m_path;
+		Coord             m_to;
 	};
 } // namespace MbileRobots
 

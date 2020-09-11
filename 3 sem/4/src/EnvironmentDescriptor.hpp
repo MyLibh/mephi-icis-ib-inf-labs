@@ -39,6 +39,8 @@ namespace MobileRobots
 
 		inline constexpr void setHeight(const unsigned height) noexcept { m_height = height; }
 
+		inline constexpr bool isInField(const Coord& coord) const noexcept { return coord.x < m_width && coord.y < m_height; }
+
 		template<typename _ObjectType, typename ..._Args, typename = std::enable_if_t<std::is_base_of_v<MapObject, _ObjectType>>>
 		inline void addObject(_Args&&... args) { m_objects.push_back(std::make_shared<_ObjectType>(std::forward<_Args>(args)...)); }
 

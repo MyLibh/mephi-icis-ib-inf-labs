@@ -29,10 +29,12 @@ namespace MobileRobots
 		void work();
 
 	private:
-		std::shared_ptr<EnvironmentDescriptor>            m_envDescr;
-		std::map<Coord, const std::shared_ptr<MapObject>> m_map;
-		std::set<Coord>                                   m_tasks;
-		std::vector<std::shared_ptr<ManagerModule>>       m_managers;
+		std::shared_ptr<EnvironmentDescriptor>                m_envDescr;
+		std::map<Coord, const std::shared_ptr<MapObject>>     m_map;
+		std::set<Coord>                                       m_tasks;
+		std::vector<std::shared_ptr<ManagerModule>>           m_managers;
+		std::vector<std::shared_ptr<CommandCenter>>           m_commanders;
+		std::unordered_map<std::shared_ptr<MapObject>, Route> m_routes;
 	};
 } // namespace MobileRobots
 
