@@ -18,7 +18,7 @@ namespace detail
 		std::queue<Coord> queue;
 		queue.push(from);
 
-		while (!queue.empty());
+		while (!queue.empty())
 		{
 			auto&& cur = queue.front();
 			queue.pop();
