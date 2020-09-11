@@ -30,8 +30,6 @@ namespace MobileRobots
 	 * @param rhs Second instance
 	 * 
 	 * @return True if 'lhs' is to the left or to the bottom, False overwise
-	 * 
-	 * @exceptsafe
 	*/
 	inline constexpr bool operator<(const Coord& lhs, const Coord& rhs) noexcept
 	{
@@ -45,8 +43,6 @@ namespace MobileRobots
 	 * @param rhs Second instance
 	 * 
 	 * @return True if they are the same, False overwise
-	 * 
-	 * @exceptsafe
 	*/
 	inline constexpr bool operator==(const Coord& lhs, const Coord& rhs) noexcept
 	{
@@ -60,21 +56,17 @@ namespace MobileRobots
 	 * @param rhs Second instance
 	 * 
 	 * @return True if they are not the same, False overwise
-	 * 
-	 * @exceptsafe
 	*/
 	inline constexpr bool operator!=(const Coord& lhs, const Coord& rhs) noexcept
 	{
 		return !(lhs == rhs);
 	}
-} // MobileRobots
+} // namespace MobileRobots
 
 namespace std
 {
 	/**
 	 * @brief Specialization of std::hash for MobileRobots::Coord
-	 * 
-	 * @exceptsafe
 	*/
 	template<>
 	struct hash<MobileRobots::Coord>
