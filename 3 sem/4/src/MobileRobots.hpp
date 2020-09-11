@@ -26,7 +26,7 @@ namespace MobileRobots
         using scouts_map_t = std::vector<std::pair<QGraphicsPixmapItem*, std::shared_ptr<RobotScout>>>;
 
     private:
-        inline static constexpr auto IMAGE_SIZE{ 32U }; //-V112
+        inline static constexpr auto IMAGE_SIZE{ 64U }; //-V112
         inline static constexpr auto INFO_WIDTH{ 200U }; //-V112
 
     private:

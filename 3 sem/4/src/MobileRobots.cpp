@@ -13,7 +13,7 @@
 #include <QScrollBar>
 #include <QScreen>
 
-inline constexpr auto CONFIG_NAME{ ":/cfg/empty_map.json" };
+inline constexpr auto CONFIG_NAME{ ":/cfg/config.json" };
 
 namespace MobileRobots
 {
@@ -37,11 +37,13 @@ namespace MobileRobots
         m_ui->infoWidget->resize(MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
         m_ui->infoWidget->move(SCALED_CANVAS_WIDTH, 0);
 
-        QMainWindow::setMinimumSize(SCALED_CANVAS_WIDTH + MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
-        const auto size = qApp->screens()[0]->size().height() - 50;
-        QMainWindow::setFixedSize(size + 200, size);
-        // QMainWindow::showFullScreen();
-        QMainWindow::setWindowIcon(QIcon(":/assets/icon.ico"));
+
+        // const auto size = qApp->screens()[0]->size().height();
+        const auto width = m_envDescr->getWidth() * MobileRobots::IMAGE_SIZE;
+        const auto height = m_envDescr->getHeight() * MobileRobots::IMAGE_SIZE;
+        QMainWindow::setWindowIcon(QIcon(":/assets/icon.ico"));      
+        QMainWindow::setFixedSize(width + 200, height);
+        QMainWindow::showFullScreen();
         QMainWindow::move(qApp->screens()[0]->size().width() / 4, 0);
 
         updateInfo({ 0, 0 });
@@ -49,7 +51,7 @@ namespace MobileRobots
 
     void MobileRobots::loadImages()
     {
-        const QString path = ":/assets/images/";
+        const QString path = ":/assets/images/scaled/";
 
         m_images.emplace("DarkGrass", QPixmap(path + "dark_grass.png"));
         m_images.emplace("LightGrass", QPixmap(path + "light_grass.png"));

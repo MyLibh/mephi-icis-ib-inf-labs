@@ -1,21 +1,27 @@
 <RCC>
-  <qresource>
-    <file>assets/images/command_center.png</file>
-    <file>assets/images/dark_barrier.png</file>
-    <file>assets/images/dark_grass.png</file>
-    <file>assets/images/dark_interesting_object.png</file>
-    <file>assets/images/light_barrier.png</file>
-    <file>assets/images/light_grass.png</file>
-    <file>assets/images/light_interesting_object.png</file>
-    <file>assets/images/observation_center.png</file>
-    <file>assets/images/robot_commander.png</file>
-    <file>assets/images/robot_scout.png</file>
-  </qresource>
-  <qresource>
-    <file>cfg/empty_map.json</file>
-    <file>cfg/config.json</file>
-  </qresource>
-  <qresource>
-    <file>assets/icon.ico</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>assets/images/command_center.png</file>
+        <file>assets/images/dark_barrier.png</file>
+        <file>assets/images/dark_grass.png</file>
+        <file>assets/images/dark_interesting_object.png</file>
+        <file>assets/images/light_barrier.png</file>
+        <file>assets/images/light_grass.png</file>
+        <file>assets/images/light_interesting_object.png</file>
+        <file>assets/images/observation_center.png</file>
+        <file>assets/images/robot_commander.png</file>
+        <file>assets/images/robot_scout.png</file>
+        <file>cfg/empty_map.json</file>
+        <file>cfg/config.json</file>
+        <file>assets/icon.ico</file>
+        <file>assets/images/scaled/command_center.png</file>
+        <file>assets/images/scaled/dark_barrier.png</file>
+        <file>assets/images/scaled/dark_grass.png</file>
+        <file>assets/images/scaled/dark_interesting_object.png</file>
+        <file>assets/images/scaled/light_barrier.png</file>
+        <file>assets/images/scaled/light_grass.png</file>
+        <file>assets/images/scaled/light_interesting_object.png</file>
+        <file>assets/images/scaled/observation_center.png</file>
+        <file>assets/images/scaled/robot_commander.png</file>
+        <file>assets/images/scaled/robot_scout.png</file>
+    </qresource>
 </RCC>
