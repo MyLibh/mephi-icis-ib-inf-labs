@@ -48,6 +48,9 @@ namespace MobileRobots
 		inline constexpr auto getMaxSlots() const noexcept { return m_maxSlots; }
 
 		[[nodiscard]]
+		inline constexpr auto& getModules() const noexcept { return m_modules; }
+
+		[[nodiscard]]
 		inline auto getOwner() const noexcept { return m_owner; }
 
 		[[nodiscard]]

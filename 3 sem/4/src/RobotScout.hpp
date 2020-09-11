@@ -3,12 +3,13 @@
 
 #include "ObservationCenter.hpp"
 
-#include <vector>
-
 namespace MobileRobots
 {
 	class RobotScout : virtual public ObservationCenter
 	{
+	protected:
+		void redrawModules() noexcept;
+
 	public:
 		RobotScout() = delete;
 
@@ -22,9 +23,9 @@ namespace MobileRobots
 		inline virtual QString toString() const override { return ObservationCenter::toStringHelper("RobotScout"); }
 
 		[[nodiscard]]
-		std::map<Coord, std::shared_ptr<MapObject>> getObjectsAround() const override final;
+		std::map<Coord, std::shared_ptr<MapObject>> getObjectsAround() const override;
 
-		inline void setPosition(const Coord& coord) noexcept { m_pos = coord; }
+		inline void setPosition(const Coord& coord) noexcept { m_pos = coord; redrawModules(); }
 
 	protected:
 		bool m_isFree;

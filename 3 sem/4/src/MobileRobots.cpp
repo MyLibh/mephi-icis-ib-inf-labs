@@ -5,11 +5,13 @@
 #include "EnvironmentDescriptor.hpp"
 #include "MapLoader.hpp"
 #include "AI.hpp"
+#include "Sensor.hpp"
 
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <QDebug>
 
 namespace MobileRobots
 {
@@ -68,6 +70,47 @@ namespace MobileRobots
 
         for (unsigned y{}; y <= HEIGHT; y += m_scaleFactor)
             m_scene->addLine(0, y, WIDTH, y, QPen(Qt::black));
+
+        for (const auto& object : m_envDescr->getObjects())
+            if (typeid(*object) != typeid(Barrier) && typeid(*object) != typeid(InterestingObject))
+            {
+                const auto& obj = std::dynamic_pointer_cast<ObservationCenter>(object);
+                for (const auto& module : obj->getModules())
+                {
+                    if (typeid(*module) == typeid(Sensor))
+                    {
+                        const auto& sensor = std::dynamic_pointer_cast<Sensor>(module);
+                        qDebug() << obj->getX() - 0.5;
+                        auto item = m_scene->addEllipse(
+                            (obj->getX() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor),
+                            (obj->getY() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor),
+                            sensor->getRadius() * 2. * m_scaleFactor,
+                            sensor->getRadius() * 2. * m_scaleFactor,
+                            QPen(Qt::blue), QBrush(Qt::blue, Qt::BrushStyle::Dense7Pattern));
+
+                        if (typeid(*object) == typeid(ObservationCenter) || typeid(*object) == typeid(CommandCenter))
+                        {
+                            item->setStartAngle(sensor->getDirection() * 90 * 16);
+                            item->setSpanAngle(sensor->getAngle() * 16);
+                        }
+
+                        sensor->setGraphicsItem(item);
+                    }
+                    else if(typeid(*module) == typeid(ManagerModule))
+                    {
+                        const auto& manager = std::dynamic_pointer_cast<ManagerModule>(module);
+
+                        auto item = m_scene->addEllipse(
+                            (obj->getX() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor),
+                            (obj->getY() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor),
+                            manager->getRadius() * 2. * m_scaleFactor,
+                            manager->getRadius() * 2. * m_scaleFactor,
+                            QPen(Qt::red), QBrush(Qt::red, Qt::BrushStyle::BDiagPattern));
+
+                        manager->setGraphicsItem(item);
+                    }
+                }
+            }
     }
 
     void MobileRobots::loadImages()
@@ -111,7 +154,7 @@ namespace MobileRobots
 
     void MobileRobots::mousePressEvent(QMouseEvent* event)
     {
-        static QGraphicsRectItem* sCurrentTile = m_scene->addRect({ 0., 0., static_cast<qreal>(m_scaleFactor), static_cast<qreal>(m_scaleFactor) }, QPen(Qt::red));
+        static QGraphicsRectItem* sCurrentTile = m_scene->addRect({ 0., 0., static_cast<qreal>(m_scaleFactor), static_cast<qreal>(m_scaleFactor) }, QPen(Qt::cyan));
 
         if (event->x() <= m_ui->canvas->width() && event->y() <= m_ui->canvas->height())
         {
