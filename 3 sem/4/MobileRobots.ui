@@ -96,6 +96,12 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+    <property name="font">
+     <font>
+      <family>Consolas</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
     <property name="locale">
      <locale language="English" country="UnitedStates"/>
     </property>

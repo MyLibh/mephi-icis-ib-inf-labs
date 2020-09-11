@@ -4,14 +4,13 @@
 #include "AI.hpp"
 #include "EnvironmentDescriptor.hpp"
 #include "CommandCenter.hpp"
+#include "Coord.hpp"
 
 #include <queue>
 
-namespace detail
+namespace MobileRobots
 {
-	using MobileRobots::Coord;
-
-	std::queue<Coord> BFS(const Coord& from, const Coord& to, const std::shared_ptr<MobileRobots::EnvironmentDescriptor>& envDesc)
+	std::queue<Coord> AI::BFS(const Coord& from, const Coord& to)
 	{
 		std::unordered_map<Coord, bool> visited;
 
@@ -24,25 +23,22 @@ namespace detail
 			queue.pop();
 
 			visited[cur] = true;
-			if (Coord left{ cur.x - 1, cur.y }; envDesc->isInField(left))
+			if (Coord left{ cur.x - 1, cur.y }; m_envDescr->isInField(left) && isExplored(left))
 				queue.push(left);
-			if (Coord above{ cur.x, cur.y + 1 }; envDesc->isInField(above))
+			if (Coord above{ cur.x, cur.y + 1 }; m_envDescr->isInField(above) && isExplored(above))
 				queue.push(above);
-			if (Coord right{ cur.x + 1, cur.y }; envDesc->isInField(right))
+			if (Coord right{ cur.x + 1, cur.y }; m_envDescr->isInField(right) && isExplored(right))
 				queue.push(right);
-			if (Coord below{ cur.x, cur.y - 1 }; envDesc->isInField(below))
+			if (Coord below{ cur.x, cur.y - 1 }; m_envDescr->isInField(below) && isExplored(below))
 				queue.push(below);
 		}
-
+		
 		return {};
 	}
-} // namespace detail
 
-namespace MobileRobots
-{
-	Route AI::makeRoute(const Coord& from, const Coord& where)
+	Route AI::makeRoute(const Coord& from, const Coord& to)
 	{
-		return Route(std::queue<Coord>());
+		return Route(std::move(BFS(from, to)));
 	}
 
 	AI::AI(std::shared_ptr<EnvironmentDescriptor> envDescr) :
@@ -75,7 +71,7 @@ namespace MobileRobots
 				m_tasks.insert(coord);
 		}
 
-		std::queue<Coord> q;
+		/*std::queue<Coord> q;
 		q.push({ 0, 1 });
 		q.push({ 0, 2 });
 		q.push({ 0, 3 });
@@ -87,7 +83,7 @@ namespace MobileRobots
 		q.push({ 3, 2 });
 		q.push({ 3, 1 });
 
-		m_routes.emplace(m_commanders[0], Route(std::move(q)));
+		m_routes.emplace(m_commanders[0], Route(std::move(q)));*/
 	}
 
 	void AI::addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object /* = nullptr */)
@@ -110,7 +106,15 @@ namespace MobileRobots
 			}
 		}
 
-		// TODO: give tasks
+		for (auto& commander : m_commanders)
+			if (typeid(*commander) == typeid(RobotCommander) && m_routes.find(commander) == std::end(m_routes))
+				for (auto& to : m_tasks)
+					if (auto&& route = makeRoute(commander->getPos(), to); !route.isFinished())
+					{
+						m_routes.emplace(commander, route);
+
+						break;
+					}
 
 		for (auto&& [object, route] : m_routes)
 		{

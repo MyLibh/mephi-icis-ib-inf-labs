@@ -193,6 +193,8 @@ namespace MobileRobots
 
     void MobileRobots::resizeEvent(QResizeEvent* event)
     {
+        // TODO: reimpl!!!
+
         auto canvas = m_ui->canvas;
         canvas->resize(QMainWindow::width() - MobileRobots::INFO_WIDTH, QMainWindow::height());
 
