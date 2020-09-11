@@ -10,7 +10,7 @@ namespace MobileRobots
 
 	void ManagerModule::setAI(std::shared_ptr<AI> ai) noexcept
 	{
-		ManagerModule::sAI = ai;
+		ManagerModule::sAI = std::move(ai);
 	}
 
 	bool ManagerModule::isExplored(const Coord& coord) const noexcept

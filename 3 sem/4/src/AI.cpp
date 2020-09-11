@@ -75,7 +75,7 @@ namespace MobileRobots
 				m_tasks.insert(coord);
 		}
 
-		/*std::queue<Coord> q;
+		std::queue<Coord> q;
 		q.push({ 0, 1 });
 		q.push({ 0, 2 });
 		q.push({ 0, 3 });
@@ -87,7 +87,7 @@ namespace MobileRobots
 		q.push({ 3, 2 });
 		q.push({ 3, 1 });
 
-		m_routes.emplace(m_commanders[0], Route(std::move(q)));*/
+		m_routes.emplace(m_commanders[0], Route(std::move(q)));
 	}
 
 	void AI::addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object /* = nullptr */)

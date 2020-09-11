@@ -11,8 +11,9 @@
 #include <QGraphicsPixmapItem>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <QScreen>
 
-inline constexpr auto CONFIG_NAME{ ":/cfg/config.json" };
+inline constexpr auto CONFIG_NAME{ ":/cfg/empty_map.json" };
 
 namespace MobileRobots
 {
@@ -31,15 +32,17 @@ namespace MobileRobots
         canvas->verticalScrollBar()->blockSignals(true);
         canvas->setScene(m_scene.get());
 
-        m_scene->setSceneRect(0, 0, canvas->width(), canvas->height());     
+        m_scene->setSceneRect(0, 0, canvas->width(), canvas->height());
 
         m_ui->infoWidget->resize(MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
         m_ui->infoWidget->move(SCALED_CANVAS_WIDTH, 0);
 
         QMainWindow::setMinimumSize(SCALED_CANVAS_WIDTH + MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
-        QMainWindow::setFixedSize(SCALED_CANVAS_WIDTH + MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
-        QMainWindow::showFullScreen();
+        const auto size = qApp->screens()[0]->size().height() - 50;
+        QMainWindow::setFixedSize(size + 200, size);
+        // QMainWindow::showFullScreen();
         QMainWindow::setWindowIcon(QIcon(":/assets/icon.ico"));
+        QMainWindow::move(qApp->screens()[0]->size().width() / 4, 0);
 
         updateInfo({ 0, 0 });
     }
@@ -81,6 +84,9 @@ namespace MobileRobots
                     {
                         const auto& sensor = std::dynamic_pointer_cast<Sensor>(module);
 
+                        if (sensor->getGraphicsItem())
+                            m_scene->removeItem(sensor->getGraphicsItem());
+
                         QPen pen(Qt::blue);
                         pen.setStyle(Qt::PenStyle::DashLine);
 
@@ -102,6 +108,9 @@ namespace MobileRobots
                     else if (typeid(*module) == typeid(ManagerModule))
                     {
                         const auto& manager = std::dynamic_pointer_cast<ManagerModule>(module);
+
+                        if (manager->getGraphicsItem())
+                            m_scene->removeItem(manager->getGraphicsItem());
 
                         QPen pen(Qt::red);
                         pen.setStyle(Qt::PenStyle::DotLine);
@@ -218,9 +227,9 @@ namespace MobileRobots
         {
             pixmap->setPixmap(pixmap->pixmap().scaled(m_scaleFactor.x, m_scaleFactor.y));
             pixmap->setPos(static_cast<qreal>(scout->getX()) * m_scaleFactor.x, static_cast<qreal>(scout->getY()) * m_scaleFactor.y);
-
-            // scout->resizeModules(m_scaleFactor);
         }
+
+        drawModules();
 
         QMainWindow::resizeEvent(event);
     }
@@ -277,11 +286,11 @@ namespace MobileRobots
     {
         for (auto&& coord : m_ai->getMapUpdates())
             if (auto&& object = m_envDescr->getObject(coord); !object || typeid(*object) == typeid(RobotScout) || typeid(*object) == typeid(RobotCommander))
-                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightGrass"));
+                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightGrass").scaled(m_scaleFactor.x, m_scaleFactor.y));
             else if (typeid(*object) == typeid(Barrier))
-                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightBarrier"));
+                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightBarrier").scaled(m_scaleFactor.x, m_scaleFactor.y));
             else if (typeid(*object) == typeid(InterestingObject))
-                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightInterestingObject"));
+                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightInterestingObject").scaled(m_scaleFactor.x, m_scaleFactor.y));
 
         for (const auto& [pixmap, scout] : m_scouts)
         {
