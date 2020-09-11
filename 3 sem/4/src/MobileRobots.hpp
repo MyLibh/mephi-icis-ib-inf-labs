@@ -46,6 +46,8 @@ namespace MobileRobots
 
         void mousePressEvent(QMouseEvent* event) override;
 
+        void keyPressEvent(QKeyEvent* event) override;
+
     public:
         MobileRobots(QWidget *parent = nullptr);
 
@@ -64,7 +66,8 @@ namespace MobileRobots
         map_t                                  m_map;
         scouts_map_t                           m_scouts;
         std::map<std::string, QPixmap>         m_images;
-        unsigned                               m_scaleFactor;
+        Coord                                  m_scaleFactor;
+        std::vector<QGraphicsLineItem*>        m_grid[2];
     };
 } // namespace MobileRobots
 

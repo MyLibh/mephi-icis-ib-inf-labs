@@ -24,7 +24,7 @@ namespace MobileRobots
 
 		inline void setPosition(const Coord& coord) noexcept { m_pos = coord; }
 
-		void redrawModules(const unsigned scaleFactor) noexcept;
+		void redrawModules(const Coord& scaleFactor) noexcept;
 
 	protected:
 		bool m_isFree;

@@ -12,7 +12,7 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 
-inline constexpr auto CONFIG_NAME{ ":/cfg/empty_map.json" };
+inline constexpr auto CONFIG_NAME{ ":/cfg/config.json" };
 
 namespace MobileRobots
 {
@@ -22,8 +22,8 @@ namespace MobileRobots
 
         m_scene = std::make_unique<QGraphicsScene>(m_ui->canvas);
 
-        const int SCALED_CANVAS_WIDTH = m_envDescr->getWidth() * m_scaleFactor;
-        const int SCALED_HEIGHT = m_envDescr->getHeight() * m_scaleFactor;
+        const int SCALED_CANVAS_WIDTH = m_envDescr->getWidth() * m_scaleFactor.x;
+        const int SCALED_HEIGHT = m_envDescr->getHeight() * m_scaleFactor.y;
 
         auto canvas = m_ui->canvas;
         canvas->resize(SCALED_CANVAS_WIDTH, SCALED_HEIGHT);
@@ -38,6 +38,7 @@ namespace MobileRobots
 
         QMainWindow::setMinimumSize(SCALED_CANVAS_WIDTH + MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
         QMainWindow::setFixedSize(SCALED_CANVAS_WIDTH + MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
+        QMainWindow::showFullScreen();
         QMainWindow::setWindowIcon(QIcon(":/assets/icon.ico"));
 
         updateInfo({ 0, 0 });
@@ -61,11 +62,11 @@ namespace MobileRobots
 
     void MobileRobots::drawGrid(const int width, const int height)
     {
-        for (unsigned x{}; x <= width; x += m_scaleFactor)
-            m_scene->addLine(x, 0, x, height, QPen(Qt::black));
+        for (unsigned x{}; x <= width; x += m_scaleFactor.x)
+            m_grid[0].emplace_back(m_scene->addLine(x, 0, x, height, QPen(Qt::black)));
 
-        for (unsigned y{}; y <= height; y += m_scaleFactor)
-            m_scene->addLine(0, y, width, y, QPen(Qt::black));
+        for (unsigned y{}; y <= height; y += m_scaleFactor.y)
+            m_grid[1].emplace_back(m_scene->addLine(0, y, width, y, QPen(Qt::black)));
     }
 
     void MobileRobots::drawModules()
@@ -84,10 +85,10 @@ namespace MobileRobots
                         pen.setStyle(Qt::PenStyle::DashLine);
 
                         auto item = m_scene->addEllipse(
-                            (obj->getX() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor),
-                            (obj->getY() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor),
-                            sensor->getRadius() * 2. * m_scaleFactor,
-                            sensor->getRadius() * 2. * m_scaleFactor,
+                            (obj->getX() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor.x),
+                            (obj->getY() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor.y),
+                            sensor->getRadius() * 2. * m_scaleFactor.x,
+                            sensor->getRadius() * 2. * m_scaleFactor.y,
                             pen, QBrush(Qt::blue, Qt::BrushStyle::BDiagPattern));
 
                         if (typeid(*object) == typeid(ObservationCenter) || typeid(*object) == typeid(CommandCenter))
@@ -106,10 +107,10 @@ namespace MobileRobots
                         pen.setStyle(Qt::PenStyle::DotLine);
 
                         auto item = m_scene->addEllipse(
-                            (obj->getX() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor),
-                            (obj->getY() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor),
-                            manager->getRadius() * 2. * m_scaleFactor,
-                            manager->getRadius() * 2. * m_scaleFactor,
+                            (obj->getX() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor.x),
+                            (obj->getY() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor.y),
+                            manager->getRadius() * 2. * m_scaleFactor.x,
+                            manager->getRadius() * 2. * m_scaleFactor.y,
                             pen, QBrush(Qt::red, Qt::BrushStyle::Dense7Pattern));
 
                         manager->setGraphicsItem(item);
@@ -131,7 +132,7 @@ namespace MobileRobots
             for (size_t j{}; j < size; ++j)
             {
                 m_map[i][j] = m_scene->addPixmap(m_images.at("DarkGrass"));
-                m_map[i][j]->setPos(i * static_cast<qreal>(m_scaleFactor), j * static_cast<qreal>(m_scaleFactor));
+                m_map[i][j]->setPos(static_cast<qreal>(i) * m_scaleFactor.x, static_cast<qreal>(j) * m_scaleFactor.y);
             }
         }  
 
@@ -153,7 +154,7 @@ namespace MobileRobots
                 m_scouts.emplace_back(m_scene->addPixmap(m_images.at(id == typeid(RobotScout) ? "RobotScout" : "RobotCommander")), std::dynamic_pointer_cast<RobotScout>(object));
 
                 auto&& [pixmap, scout] = m_scouts.back();
-                pixmap->setPos(static_cast<qreal>(scout->getX()) * m_scaleFactor, static_cast<qreal>(scout->getY()) * m_scaleFactor);
+                pixmap->setPos(static_cast<qreal>(scout->getX()) * m_scaleFactor.x, static_cast<qreal>(scout->getY()) * m_scaleFactor.y);
             }
         }
 
@@ -182,29 +183,71 @@ namespace MobileRobots
     void MobileRobots::resizeEvent(QResizeEvent* event)
     {
         auto canvas = m_ui->canvas;
-        canvas->resize(QMainWindow::width() - 200, QMainWindow::height());
+        canvas->resize(QMainWindow::width() - MobileRobots::INFO_WIDTH, QMainWindow::height());
 
         m_ui->infoWidget->resize(MobileRobots::INFO_WIDTH, QMainWindow::height());
         m_ui->infoWidget->move(canvas->width(), 0);
+
+        m_scene->setSceneRect(0, 0, canvas->width(), canvas->height());
+
+        m_scaleFactor.x = canvas->width() / m_envDescr->getWidth();
+        m_scaleFactor.y = canvas->height() / m_envDescr->getHeight();
+
+        for (size_t i{}; i < m_map.size(); ++i)
+            for (size_t j{}; j < m_map[0].size(); ++j)
+            {
+                m_map[i][j]->setPixmap(m_map[i][j]->pixmap().scaled(m_scaleFactor.x, m_scaleFactor.y));
+                m_map[i][j]->setPos(static_cast<qreal>(i) * m_scaleFactor.x, static_cast<qreal>(j) * m_scaleFactor.y);
+            }
+
+        for (auto& line : m_grid[0])
+            m_scene->removeItem(line);
+        
+        m_grid[0].clear();
+        for (unsigned x{}; x <= canvas->width(); x += m_scaleFactor.x)
+            m_grid[0].emplace_back(m_scene->addLine(x, 0, x, canvas->height(), QPen(Qt::black)));
+
+        for (auto& line : m_grid[1])
+            m_scene->removeItem(line);
+
+        m_grid[1].clear();
+        for (unsigned y{}; y <= canvas->height(); y += m_scaleFactor.y)
+            m_grid[1].emplace_back(m_scene->addLine(0, y, canvas->width(), y, QPen(Qt::black)));
+
+        for (auto& [pixmap, scout] : m_scouts)
+        {
+            pixmap->setPixmap(pixmap->pixmap().scaled(m_scaleFactor.x, m_scaleFactor.y));
+            pixmap->setPos(static_cast<qreal>(scout->getX()) * m_scaleFactor.x, static_cast<qreal>(scout->getY()) * m_scaleFactor.y);
+
+            // scout->resizeModules(m_scaleFactor);
+        }
 
         QMainWindow::resizeEvent(event);
     }
 
     void MobileRobots::mousePressEvent(QMouseEvent* event)
     {
-        static QGraphicsRectItem* sCurrentTile = m_scene->addRect({ 0., 0., static_cast<qreal>(m_scaleFactor), static_cast<qreal>(m_scaleFactor) }, QPen(Qt::cyan));
+        static QGraphicsRectItem* sCurrentTile = m_scene->addRect({ 0., 0., static_cast<qreal>(m_scaleFactor.x), static_cast<qreal>(m_scaleFactor.y) }, QPen(Qt::cyan));
 
         if (event->x() <= m_ui->canvas->width() && event->y() <= m_ui->canvas->height())
         {
-            auto x{ event->x() / m_scaleFactor };
-            auto y{ event->y() / m_scaleFactor };
+            auto x{ event->x() / m_scaleFactor.x };
+            auto y{ event->y() / m_scaleFactor.y };
             updateInfo({ x,  y});
 
-            sCurrentTile->setX(static_cast<qreal>(x) * m_scaleFactor);
-            sCurrentTile->setY(static_cast<qreal>(y) * m_scaleFactor);
+            sCurrentTile->setX(static_cast<qreal>(x) * m_scaleFactor.x);
+            sCurrentTile->setY(static_cast<qreal>(y) * m_scaleFactor.y);
         }
         
         QMainWindow::mousePressEvent(event);
+    }
+
+    void MobileRobots::keyPressEvent(QKeyEvent* event)
+    {
+        if (event->key() == Qt::Key_Escape)
+            QMainWindow::close();
+
+        QMainWindow::keyPressEvent(event);
     }
 
     MobileRobots::MobileRobots(QWidget* parent /* = nullptr */) :
@@ -217,7 +260,7 @@ namespace MobileRobots
         m_map(),
         m_scouts(),
         m_images(),
-        m_scaleFactor(MobileRobots::IMAGE_SIZE)
+        m_scaleFactor({ MobileRobots::IMAGE_SIZE, MobileRobots::IMAGE_SIZE })
     {
         initWidgets();
         initMap();
@@ -242,7 +285,7 @@ namespace MobileRobots
 
         for (const auto& [pixmap, scout] : m_scouts)
         {
-            pixmap->setPos(static_cast<qreal>(scout->getX()) * m_scaleFactor, static_cast<qreal>(scout->getY()) * m_scaleFactor);
+            pixmap->setPos(static_cast<qreal>(scout->getX()) * m_scaleFactor.x, static_cast<qreal>(scout->getY()) * m_scaleFactor.y);
 
             scout->redrawModules(m_scaleFactor);
         }

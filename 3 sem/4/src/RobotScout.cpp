@@ -35,10 +35,10 @@ namespace MobileRobots
         return std::move(objectsAround);
     }
 
-    void RobotScout::redrawModules(const unsigned scaleFactor) noexcept
+    void RobotScout::redrawModules(const Coord& scaleFactor) noexcept
     {
         for (auto& module : m_modules)
             if (module->isActive() && typeid(*module) != typeid(PowerGenerator))
-                std::dynamic_pointer_cast<EnergyConsumer>(module)->getGraphicsItem()->setPos(static_cast<qreal>(getX()) * scaleFactor, static_cast<qreal>(getY()) * scaleFactor);
+                std::dynamic_pointer_cast<EnergyConsumer>(module)->getGraphicsItem()->setPos(static_cast<qreal>(getX()) * scaleFactor.x, static_cast<qreal>(getY()) * scaleFactor.y);
     }
 } // namespace MobileRobots
