@@ -16,6 +16,14 @@ namespace MobileRobots
         return nullptr;
     }
 
+    std::map<Coord, std::shared_ptr<MapObject>> RobotCommander::getObjectsAround() const
+    {
+        auto allObjectsAround{ collectObjectsAround() };
+        allObjectsAround.merge(RobotScout::getObjectsAround());
+
+        return std::move(allObjectsAround);
+    }
+
     bool RobotCommander::addControlledDevice(std::shared_ptr<RobotScout> robotScout)
     {
         if (!robotScout->getOwner())

@@ -11,6 +11,10 @@ namespace MobileRobots
 	private:
 		bool aquireManager() noexcept;
 
+	protected:
+		[[nodiscard]]
+		std::map<Coord, std::shared_ptr<MapObject>> collectObjectsAround() const;
+
 	public:
 		CommandCenter() = delete;
 
@@ -25,6 +29,9 @@ namespace MobileRobots
 
 		[[nodiscard]]
 		inline auto getManager() const noexcept { return m_manager; }
+
+		[[nodiscard]]
+		virtual std::map<Coord, std::shared_ptr<MapObject>> getObjectsAround() const override;
 
 		bool aquireDevice();
 

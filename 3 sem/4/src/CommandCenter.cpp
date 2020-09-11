@@ -22,6 +22,27 @@ namespace MobileRobots
 		return m_manager != nullptr;
 	}
 
+	std::map<Coord, std::shared_ptr<MapObject>> CommandCenter::collectObjectsAround() const
+	{
+		std::map<Coord, std::shared_ptr<MapObject>> devicesObjectsAround;
+		for (const auto& device : m_manager->getDevices())
+		{
+			//auto objectsAround{  };
+			devicesObjectsAround.merge(device->getObjectsAround());
+			//devicesObjectsAround.insert(std::make_move_iterator(std::begin(objectsAround)), std::make_move_iterator(std::end(objectsAround)));
+		}
+
+		return std::move(devicesObjectsAround);
+	}
+
+	std::map<Coord, std::shared_ptr<MapObject>> CommandCenter::getObjectsAround() const
+	{
+		auto allObjectsAround = collectObjectsAround();
+		allObjectsAround.merge(ObservationCenter::getObjectsAround());
+
+		return std::move(allObjectsAround);
+	}
+
 	bool CommandCenter::aquireDevice()
 	{
 		return false;

@@ -24,6 +24,9 @@ namespace MobileRobots
 		[[nodiscard]]
 		std::shared_ptr<RobotScout> getControlledDevice() const;
 
+		[[nodiscard]]
+		std::map<Coord, std::shared_ptr<MapObject>> getObjectsAround() const override;
+
 		bool addControlledDevice(std::shared_ptr<RobotScout> robotScout);
 	};
 } // namespace MobileRobots
