@@ -153,7 +153,7 @@
 				},
 				{
 					"type": "ManagerModule",
-					"radius": 50,
+					"radius": 2,
 					"maxDevices": 14,
 					"powerUsage": 12,
 					"priority": 1
@@ -191,7 +191,7 @@
 				},
 				{
 					"type": "ManagerModule",
-					"radius": 50,
+					"radius": 2,
 					"maxDevices": 14,
 					"powerUsage": 12,
 					"priority": 1
@@ -229,7 +229,7 @@
 				},
 				{
 					"type": "ManagerModule",
-					"radius": 50,
+					"radius": 2,
 					"maxDevices": 14,
 					"powerUsage": 12,
 					"priority": 1
@@ -267,7 +267,7 @@
 				},
 				{
 					"type": "ManagerModule",
-					"radius": 50,
+					"radius": 2,
 					"maxDevices": 14,
 					"powerUsage": 12,
 					"priority": 1
@@ -290,16 +290,9 @@
 				},
 				{
 					"type": "Sensor",
-					"radius": 8,
-					"direction": 0,
-					"angle": 3,
-					"powerUsage": 8
-				},
-				{
-					"type": "Sensor",
-					"radius": 8,
-					"direction": 0,
-					"angle": 3,
+					"radius": 1,
+					"direction": 1,
+					"angle": 90,
 					"powerUsage": 8
 				}
 			]
@@ -320,16 +313,9 @@
 				},
 				{
 					"type": "Sensor",
-					"radius": 8,
-					"direction": 0,
-					"angle": 3,
-					"powerUsage": 8
-				},
-				{
-					"type": "Sensor",
-					"radius": 8,
-					"direction": 0,
-					"angle": 3,
+					"radius": 1,
+					"direction": 2,
+					"angle": 90,
 					"powerUsage": 8
 				}
 			]
@@ -350,16 +336,9 @@
 				},
 				{
 					"type": "Sensor",
-					"radius": 8,
-					"direction": 0,
-					"angle": 3,
-					"powerUsage": 8
-				},
-				{
-					"type": "Sensor",
-					"radius": 8,
-					"direction": 0,
-					"angle": 3,
+					"radius": 1,
+					"direction": 3,
+					"angle": 90,
 					"powerUsage": 8
 				}
 			]
@@ -380,16 +359,9 @@
 				},
 				{
 					"type": "Sensor",
-					"radius": 8,
+					"radius": 1,
 					"direction": 0,
-					"angle": 3,
-					"powerUsage": 8
-				},
-				{
-					"type": "Sensor",
-					"radius": 8,
-					"direction": 0,
-					"angle": 3,
+					"angle": 90,
 					"powerUsage": 8
 				}
 			]
@@ -410,16 +382,9 @@
 				},
 				{
 					"type": "Sensor",
-					"radius": 8,
+					"radius": 1,
 					"direction": 0,
-					"angle": 3,
-					"powerUsage": 8
-				},
-				{
-					"type": "Sensor",
-					"radius": 8,
-					"direction": 0,
-					"angle": 3,
+					"angle": 0,
 					"powerUsage": 8
 				}
 			]
@@ -455,7 +420,7 @@
 				},
 				{
 					"type": "ManagerModule",
-					"radius": 50,
+					"radius": 2,
 					"maxDevices": 14,
 					"powerUsage": 12,
 					"priority": 1

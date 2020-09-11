@@ -30,7 +30,7 @@
         },
         {
           "type": "ManagerModule",
-          "radius": 50,
+          "radius": 2,
           "maxDevices": 0,
           "powerUsage": 10,
           "priority": 1
