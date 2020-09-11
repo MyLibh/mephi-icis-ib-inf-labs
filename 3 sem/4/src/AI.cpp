@@ -65,9 +65,9 @@ namespace MobileRobots
 			}
 
 			if (typeid(*object) == typeid(RobotScout) || typeid(*object) == typeid(RobotCommander))
-				m_map.emplace(object->getPos(), nullptr);
+				addExploredPoint(object->getPos());
 			else if (typeid(*object) == typeid(ObservationCenter) || typeid(*object) == typeid(CommandCenter))
-				m_map.emplace(object->getPos(), object);
+				addExploredPoint(object->getPos(), object);
 			else
 				continue;
 
@@ -90,6 +90,12 @@ namespace MobileRobots
 		m_routes.emplace(m_commanders[0], Route(std::move(q)));
 	}
 
+	void AI::addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object /* = nullptr */)
+	{
+		if (auto&& [_, suc] = m_map.try_emplace(coord, object); suc)
+			m_mapUpdates.insert(coord);
+	}
+
 	void AI::work()
 	{
 		for (auto& commander : m_commanders)
@@ -100,7 +106,7 @@ namespace MobileRobots
 				if (m_map.find(coord) == std::end(m_map))
 					m_tasks.insert(coord);
 
-				m_map.emplace(coord, object);
+				addExploredPoint(coord, object);
 			}
 		}
 
@@ -112,7 +118,7 @@ namespace MobileRobots
 			{
 				auto&& to = route.to();
 
-				m_map.try_emplace(to, m_envDescr->getObject(to));
+				// m_map.try_emplace(to, m_envDescr->getObject(to));
 				m_tasks.erase(to);
 
 				// TODO: try to give new task

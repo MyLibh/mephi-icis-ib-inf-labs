@@ -7,9 +7,6 @@ namespace MobileRobots
 {
 	class RobotScout : virtual public ObservationCenter
 	{
-	protected:
-		void redrawModules() noexcept;
-
 	public:
 		RobotScout() = delete;
 
@@ -25,7 +22,9 @@ namespace MobileRobots
 		[[nodiscard]]
 		std::map<Coord, std::shared_ptr<MapObject>> getObjectsAround() const override;
 
-		inline void setPosition(const Coord& coord) noexcept { m_pos = coord; redrawModules(); }
+		inline void setPosition(const Coord& coord) noexcept { m_pos = coord; }
+
+		void redrawModules(const unsigned scaleFactor) noexcept;
 
 	protected:
 		bool m_isFree;

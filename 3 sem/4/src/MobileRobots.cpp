@@ -11,7 +11,8 @@
 #include <QGraphicsPixmapItem>
 #include <QMouseEvent>
 #include <QScrollBar>
-#include <QDebug>
+
+inline constexpr auto CONFIG_NAME{ ":/cfg/empty_map.json" };
 
 namespace MobileRobots
 {
@@ -28,89 +29,18 @@ namespace MobileRobots
         canvas->resize(SCALED_CANVAS_WIDTH, SCALED_HEIGHT);
         canvas->horizontalScrollBar()->blockSignals(true);
         canvas->verticalScrollBar()->blockSignals(true);
+        canvas->setScene(m_scene.get());
+
+        m_scene->setSceneRect(0, 0, canvas->width(), canvas->height());     
 
         m_ui->infoWidget->resize(MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
         m_ui->infoWidget->move(SCALED_CANVAS_WIDTH, 0);
 
+        QMainWindow::setMinimumSize(SCALED_CANVAS_WIDTH + MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
         QMainWindow::setFixedSize(SCALED_CANVAS_WIDTH + MobileRobots::INFO_WIDTH, SCALED_HEIGHT);
         QMainWindow::setWindowIcon(QIcon(":/assets/icon.ico"));
 
         updateInfo({ 0, 0 });
-    }
-
-    void MobileRobots::initMap()
-    {
-        loadImages();
-
-        m_map = map_t(m_envDescr->getWidth());
-        for (size_t i{}; i < m_map.size(); ++i)
-        {
-            const auto size = m_envDescr->getHeight();
-
-            m_map[i].resize(size);
-            for (size_t j{}; j < size; ++j)
-            {
-                m_map[i][j] = new QGraphicsPixmapItem(m_images["DarkGrass"]);
-                m_map[i][j]->setPos(i * static_cast<qreal>(m_scaleFactor), j * static_cast<qreal>(m_scaleFactor));
-            }
-        }
-
-        auto canvas = m_ui->canvas;
-        const auto WIDTH = canvas->width();
-        const auto HEIGHT = canvas->height();
-
-        m_scene->setSceneRect(0, 0, WIDTH, HEIGHT);
-        canvas->setScene(m_scene.get());
-        for (auto&& row : m_map)
-            for (auto&& obj : row)
-                m_scene->addItem(obj);
-
-        for (unsigned x{}; x <= WIDTH; x += m_scaleFactor)
-            m_scene->addLine(x, 0, x, HEIGHT, QPen(Qt::black));
-
-        for (unsigned y{}; y <= HEIGHT; y += m_scaleFactor)
-            m_scene->addLine(0, y, WIDTH, y, QPen(Qt::black));
-
-        for (const auto& object : m_envDescr->getObjects())
-            if (typeid(*object) != typeid(Barrier) && typeid(*object) != typeid(InterestingObject))
-            {
-                const auto& obj = std::dynamic_pointer_cast<ObservationCenter>(object);
-                for (const auto& module : obj->getModules())
-                {
-                    if (typeid(*module) == typeid(Sensor))
-                    {
-                        const auto& sensor = std::dynamic_pointer_cast<Sensor>(module);
-                        qDebug() << obj->getX() - 0.5;
-                        auto item = m_scene->addEllipse(
-                            (obj->getX() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor),
-                            (obj->getY() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor),
-                            sensor->getRadius() * 2. * m_scaleFactor,
-                            sensor->getRadius() * 2. * m_scaleFactor,
-                            QPen(Qt::blue), QBrush(Qt::blue, Qt::BrushStyle::Dense7Pattern));
-
-                        if (typeid(*object) == typeid(ObservationCenter) || typeid(*object) == typeid(CommandCenter))
-                        {
-                            item->setStartAngle(sensor->getDirection() * 90 * 16);
-                            item->setSpanAngle(sensor->getAngle() * 16);
-                        }
-
-                        sensor->setGraphicsItem(item);
-                    }
-                    else if(typeid(*module) == typeid(ManagerModule))
-                    {
-                        const auto& manager = std::dynamic_pointer_cast<ManagerModule>(module);
-
-                        auto item = m_scene->addEllipse(
-                            (obj->getX() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor),
-                            (obj->getY() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor),
-                            manager->getRadius() * 2. * m_scaleFactor,
-                            manager->getRadius() * 2. * m_scaleFactor,
-                            QPen(Qt::red), QBrush(Qt::red, Qt::BrushStyle::BDiagPattern));
-
-                        manager->setGraphicsItem(item);
-                    }
-                }
-            }
     }
 
     void MobileRobots::loadImages()
@@ -127,6 +57,110 @@ namespace MobileRobots
         m_images.emplace("RobotCommander", QPixmap(path + "robot_commander.png"));
         m_images.emplace("ObservationCenter", QPixmap(path + "observation_center.png"));
         m_images.emplace("CommandCenter", QPixmap(path + "command_center.png"));
+    }
+
+    void MobileRobots::drawGrid(const int width, const int height)
+    {
+        for (unsigned x{}; x <= width; x += m_scaleFactor)
+            m_scene->addLine(x, 0, x, height, QPen(Qt::black));
+
+        for (unsigned y{}; y <= height; y += m_scaleFactor)
+            m_scene->addLine(0, y, width, y, QPen(Qt::black));
+    }
+
+    void MobileRobots::drawModules()
+    {
+        for (const auto& object : m_envDescr->getObjects())
+            if (typeid(*object) != typeid(Barrier) && typeid(*object) != typeid(InterestingObject))
+            {
+                const auto& obj = std::dynamic_pointer_cast<ObservationCenter>(object);
+                for (const auto& module : obj->getModules())
+                {
+                    if (typeid(*module) == typeid(Sensor))
+                    {
+                        const auto& sensor = std::dynamic_pointer_cast<Sensor>(module);
+
+                        QPen pen(Qt::blue);
+                        pen.setStyle(Qt::PenStyle::DashLine);
+
+                        auto item = m_scene->addEllipse(
+                            (obj->getX() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor),
+                            (obj->getY() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor),
+                            sensor->getRadius() * 2. * m_scaleFactor,
+                            sensor->getRadius() * 2. * m_scaleFactor,
+                            pen, QBrush(Qt::blue, Qt::BrushStyle::BDiagPattern));
+
+                        if (typeid(*object) == typeid(ObservationCenter) || typeid(*object) == typeid(CommandCenter))
+                        {
+                            item->setStartAngle(sensor->getDirection() * 90 * 16);
+                            item->setSpanAngle(sensor->getAngle() * 16);
+                        }
+
+                        sensor->setGraphicsItem(item);
+                    }
+                    else if (typeid(*module) == typeid(ManagerModule))
+                    {
+                        const auto& manager = std::dynamic_pointer_cast<ManagerModule>(module);
+
+                        QPen pen(Qt::red);
+                        pen.setStyle(Qt::PenStyle::DotLine);
+
+                        auto item = m_scene->addEllipse(
+                            (obj->getX() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor),
+                            (obj->getY() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor),
+                            manager->getRadius() * 2. * m_scaleFactor,
+                            manager->getRadius() * 2. * m_scaleFactor,
+                            pen, QBrush(Qt::red, Qt::BrushStyle::Dense7Pattern));
+
+                        manager->setGraphicsItem(item);
+                    }
+                }
+            }
+    }
+
+    void MobileRobots::initMap()
+    {
+        loadImages();
+
+        m_map = map_t(m_envDescr->getWidth());
+        for (size_t i{}; i < m_map.size(); ++i)
+        {
+            const auto size = m_envDescr->getHeight();
+
+            m_map[i].resize(size);
+            for (size_t j{}; j < size; ++j)
+            {
+                m_map[i][j] = m_scene->addPixmap(m_images.at("DarkGrass"));
+                m_map[i][j]->setPos(i * static_cast<qreal>(m_scaleFactor), j * static_cast<qreal>(m_scaleFactor));
+            }
+        }  
+
+        for (const auto& object : m_envDescr->getObjects())
+        {
+            std::string name;
+            const auto& id = typeid(*object);
+            if (id == typeid(Barrier))                name = "DarkBarrier";
+            else if (id == typeid(InterestingObject)) name = "DarkInterestingObject";
+            else if (id == typeid(RobotScout))        name = "RobotScout";
+            else if (id == typeid(RobotCommander))    name = "RobotCommander";
+            else if (id == typeid(ObservationCenter)) name = "ObservationCenter";
+            else if (id == typeid(CommandCenter))     name = "CommandCenter";
+
+            if (id != typeid(RobotScout) && id != typeid(RobotCommander))
+                m_map[object->getX()][object->getY()]->setPixmap(m_images.at(name));
+            else
+            {
+                m_scouts.emplace_back(m_scene->addPixmap(m_images.at(id == typeid(RobotScout) ? "RobotScout" : "RobotCommander")), std::dynamic_pointer_cast<RobotScout>(object));
+
+                auto&& [pixmap, scout] = m_scouts.back();
+                pixmap->setPos(static_cast<qreal>(scout->getX()) * m_scaleFactor, static_cast<qreal>(scout->getY()) * m_scaleFactor);
+            }
+        }
+
+        auto canvas = m_ui->canvas;
+        drawGrid(canvas->width(), canvas->height());
+
+        drawModules();
     }
 
     void MobileRobots::updateInfo(const Coord& coord)
@@ -147,7 +181,11 @@ namespace MobileRobots
 
     void MobileRobots::resizeEvent(QResizeEvent* event)
     {
-        m_ui->canvas->resize(QMainWindow::width() - 200, QMainWindow::height());
+        auto canvas = m_ui->canvas;
+        canvas->resize(QMainWindow::width() - 200, QMainWindow::height());
+
+        m_ui->infoWidget->resize(MobileRobots::INFO_WIDTH, QMainWindow::height());
+        m_ui->infoWidget->move(canvas->width(), 0);
 
         QMainWindow::resizeEvent(event);
     }
@@ -172,11 +210,12 @@ namespace MobileRobots
     MobileRobots::MobileRobots(QWidget* parent /* = nullptr */) :
         QMainWindow(parent),
         m_ui(std::make_unique<Ui::MobileRobotsClass>()),
-        m_envDescr(MapLoader::load(QString(":/cfg/empty_map.json"))),
+        m_envDescr(MapLoader::load(QString(CONFIG_NAME))),
         m_ai(std::make_shared<AI>(m_envDescr)),
         m_timer(std::make_unique<QTimer>(this)),
         m_scene(),
         m_map(),
+        m_scouts(),
         m_images(),
         m_scaleFactor(MobileRobots::IMAGE_SIZE)
     {
@@ -193,28 +232,19 @@ namespace MobileRobots
 
     void MobileRobots::draw() const
     {
-        for (uint32_t i{}; i < m_map.size(); ++i)
-            for (uint32_t j{}; j < m_map[0].size(); ++j)
-                m_map[i][j]->setPixmap(m_images.at(m_ai->isExplored({ i, j }) ? "LightGrass" : "DarkGrass"));
+        for (auto&& coord : m_ai->getMapUpdates())
+            if (auto&& object = m_envDescr->getObject(coord); !object || typeid(*object) == typeid(RobotScout) || typeid(*object) == typeid(RobotCommander))
+                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightGrass"));
+            else if (typeid(*object) == typeid(Barrier))
+                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightBarrier"));
+            else if (typeid(*object) == typeid(InterestingObject))
+                m_map[coord.x][coord.y]->setPixmap(m_images.at("LightInterestingObject"));
 
-        for (const auto& object : m_envDescr->getObjects())
+        for (const auto& [pixmap, scout] : m_scouts)
         {
-            std::string name;
-            if (const auto& id = typeid(*object); id == typeid(Barrier))
-                name = m_ai->isExplored(object->getPos()) ? "LightBarrier" : "DarkBarrier";
-            else if (id == typeid(InterestingObject))
-                name = m_ai->isExplored(object->getPos()) ? "LightInterestingObject" : "DarkInterestingObject";
-            else if (id == typeid(RobotScout))
-                name = "RobotScout";
-            else if (id == typeid(RobotCommander))
-                name = "RobotCommander";
-            else if (id == typeid(ObservationCenter))
-                name = "ObservationCenter";
-            else if (id == typeid(CommandCenter))
-                name = "CommandCenter";
+            pixmap->setPos(static_cast<qreal>(scout->getX()) * m_scaleFactor, static_cast<qreal>(scout->getY()) * m_scaleFactor);
 
-            if (!name.empty())
-                m_map[object->getX()][object->getY()]->setPixmap(m_images.at(name));
+            scout->redrawModules(m_scaleFactor);
         }
     }
 

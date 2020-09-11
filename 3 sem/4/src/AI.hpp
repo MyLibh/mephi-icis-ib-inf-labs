@@ -24,7 +24,12 @@ namespace MobileRobots
 		[[nodiscard]]
 		const auto& getExploredObjects() const noexcept { return m_map; }
 
+		[[nodiscard]]
+		inline auto getMapUpdates() noexcept { return std::move(m_mapUpdates); }
+
 		inline bool isExplored(const Coord& coord) const noexcept { return m_map.find(coord) != std::end(m_map); }		
+
+		void addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object = nullptr);
 
 		void work();
 
@@ -35,6 +40,7 @@ namespace MobileRobots
 		std::vector<std::shared_ptr<ManagerModule>>           m_managers;
 		std::vector<std::shared_ptr<CommandCenter>>           m_commanders;
 		std::unordered_map<std::shared_ptr<MapObject>, Route> m_routes;
+		std::set<Coord>                                       m_mapUpdates;
 	};
 } // namespace MobileRobots
 

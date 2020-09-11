@@ -9,6 +9,7 @@
 #include "ui_MobileRobots.h"
 
 #include "Coord.hpp"
+#include "RobotScout.hpp"
 
 namespace MobileRobots
 {
@@ -22,6 +23,7 @@ namespace MobileRobots
     private:
         using row_t = std::vector<QGraphicsPixmapItem*>;
         using map_t = std::vector<row_t>;
+        using scouts_map_t = std::vector<std::pair<QGraphicsPixmapItem*, std::shared_ptr<RobotScout>>>;
 
     private:
         inline static constexpr auto IMAGE_SIZE{ 32U }; //-V112
@@ -30,9 +32,13 @@ namespace MobileRobots
     private:
         void initWidgets();
 
-        void initMap();
-
         void loadImages();
+
+        void drawGrid(const int width, const int height);
+
+        void drawModules();
+
+        void initMap();
 
         void updateInfo(const Coord& coord);
 
@@ -56,6 +62,7 @@ namespace MobileRobots
         std::unique_ptr<QTimer>                m_timer;
         std::unique_ptr<QGraphicsScene>        m_scene;
         map_t                                  m_map;
+        scouts_map_t                           m_scouts;
         std::map<std::string, QPixmap>         m_images;
         unsigned                               m_scaleFactor;
     };

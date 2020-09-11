@@ -8,13 +8,6 @@
 
 namespace MobileRobots
 {
-    void RobotScout::redrawModules() noexcept
-    {
-        for (auto& module : m_modules) 
-            if (module->isActive() && typeid(*module) != typeid(PowerGenerator)) 
-                std::dynamic_pointer_cast<EnergyConsumer>(module)->getGraphicsItem()->setPos(getX() * 32, getY() * 32); 
-    }
-
     std::map<Coord, std::shared_ptr<MapObject>> RobotScout::getObjectsAround() const
     {
         std::map<Coord, std::shared_ptr<MapObject>> objectsAround;
@@ -33,12 +26,19 @@ namespace MobileRobots
                 const auto yMin = y < r ? 0U : y - r;
                 const auto yMax = std::min(y + r, sEnvDesc->getHeight() - 1);
 
-                for (x = xMin; x <= xMax; ++x) // TODO: check in circle
+                for (x = xMin; x <= xMax; ++x)
                     for (y = yMin; y <= yMax; ++y)
                         if (const Coord coord{ x, y }; coord != m_pos)
                             objectsAround.emplace(coord, sEnvDesc->getObject(coord));
             }
 
         return std::move(objectsAround);
+    }
+
+    void RobotScout::redrawModules(const unsigned scaleFactor) noexcept
+    {
+        for (auto& module : m_modules)
+            if (module->isActive() && typeid(*module) != typeid(PowerGenerator))
+                std::dynamic_pointer_cast<EnergyConsumer>(module)->getGraphicsItem()->setPos(static_cast<qreal>(getX()) * scaleFactor, static_cast<qreal>(getY()) * scaleFactor);
     }
 } // namespace MobileRobots
