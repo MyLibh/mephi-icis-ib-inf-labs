@@ -39,8 +39,11 @@ namespace MobileRobots
     {
         for (auto& module : m_modules)
             if (module->isActive() && typeid(*module) != typeid(PowerGenerator))
-                std::dynamic_pointer_cast<EnergyConsumer>(module)->getGraphicsItem()->setPos(
-                    (getX() + .5 - energyConsumer->getRadius()) * scaleFactor.x, 
+            {
+                auto energyConsumer = std::dynamic_pointer_cast<EnergyConsumer>(module);
+                energyConsumer->getGraphicsItem()->setPos(
+                    (getX() + .5 - energyConsumer->getRadius()) * scaleFactor.x,
                     (getY() + .5 - energyConsumer->getRadius()) * scaleFactor.y);
+            }
     }
 } // namespace MobileRobots

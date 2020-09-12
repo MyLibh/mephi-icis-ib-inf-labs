@@ -15,7 +15,6 @@ namespace MobileRobots
 	Route AI::makeRoute(const Coord& from, const Coord& to)
 	{
 		std::unordered_map<Coord, bool>  used;
-		std::unordered_map<Coord, size_t> distance;
 		std::unordered_map<Coord, Coord> prev;
 		std::queue<Coord>                queue;
 	
@@ -27,15 +26,12 @@ namespace MobileRobots
 
 				used[coord] = true;
 
-				distance[coord] = distance[cur] + 1;
-
 				prev[coord] = cur;
 			}
 		};
 
 		queue.push(from);
 		used[from] = true;
-		distance[from] = 0;
 		prev[from] = { -1U, -1U };
 		while (!queue.empty())
 		{
@@ -48,7 +44,7 @@ namespace MobileRobots
 			tryAdd(cur, { cur.x    , cur.y - 1 }); // above
 		}
 		
-		if (distance.find(to) == std::end(distance))
+		if (prev.find(to) == std::end(prev))
 			return { };
 
 		Coord cur = to;
