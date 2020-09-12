@@ -14,7 +14,6 @@ namespace MobileRobots
 	class AI final : public std::enable_shared_from_this<AI>
 	{
 	private:
-		std::queue<Coord> BFS(const Coord& from, const Coord& to);
 		Route makeRoute(const Coord& from, const Coord& to);
 
 	public:

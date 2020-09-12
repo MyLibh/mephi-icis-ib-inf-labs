@@ -5,40 +5,65 @@
 #include "EnvironmentDescriptor.hpp"
 #include "CommandCenter.hpp"
 #include "Coord.hpp"
+#include "Utility.hpp"
 
 #include <queue>
+#include <QDebug>
 
 namespace MobileRobots
 {
-	std::queue<Coord> AI::BFS(const Coord& from, const Coord& to)
+	Route AI::makeRoute(const Coord& from, const Coord& to)
 	{
-		std::unordered_map<Coord, bool> visited;
+		std::unordered_map<Coord, bool>  used;
+		std::unordered_map<Coord, size_t> distance;
+		std::unordered_map<Coord, Coord> prev;
+		std::queue<Coord>                queue;
+	
+		static auto tryAdd = [&](const Coord cur, const Coord coord)
+		{
+			if (m_envDescr->isInField(coord) && !used[coord] && isExplored(coord) && m_map[coord] == nullptr)
+			{
+				queue.push(coord);
 
-		std::queue<Coord> queue;
+				used[coord] = true;
+
+				distance[coord] = distance[cur] + 1;
+
+				prev[coord] = cur;
+			}
+		};
+
 		queue.push(from);
-
+		used[from] = true;
+		distance[from] = 0;
+		prev[from] = { -1U, -1U };
 		while (!queue.empty())
 		{
 			auto&& cur = queue.front();
 			queue.pop();
 
-			visited[cur] = true;
-			if (Coord left{ cur.x - 1, cur.y }; m_envDescr->isInField(left) && isExplored(left))
-				queue.push(left);
-			if (Coord above{ cur.x, cur.y + 1 }; m_envDescr->isInField(above) && isExplored(above))
-				queue.push(above);
-			if (Coord right{ cur.x + 1, cur.y }; m_envDescr->isInField(right) && isExplored(right))
-				queue.push(right);
-			if (Coord below{ cur.x, cur.y - 1 }; m_envDescr->isInField(below) && isExplored(below))
-				queue.push(below);
+			tryAdd(cur, { cur.x - 1, cur.y     }); // left
+			tryAdd(cur, { cur.x    , cur.y + 1 }); // below
+			tryAdd(cur, { cur.x + 1, cur.y     }); // right
+			tryAdd(cur, { cur.x    , cur.y - 1 }); // above
 		}
 		
-		return {};
-	}
+		if (distance.find(to) == std::end(distance))
+			return { };
 
-	Route AI::makeRoute(const Coord& from, const Coord& to)
-	{
-		return Route(std::move(BFS(from, to)));
+		Coord cur = to;
+		std::vector<Coord> revPath;
+		while (prev[cur] != Coord{ -1U, -1U })
+		{
+			revPath.push_back(cur);
+			cur = prev[cur];
+		}
+
+		std::queue<Coord> path;
+		for (auto coord : Utility::reverse(revPath))
+			path.push(coord);
+
+		return Route(std::move(path));
 	}
 
 	AI::AI(std::shared_ptr<EnvironmentDescriptor> envDescr) :
@@ -67,70 +92,63 @@ namespace MobileRobots
 			else
 				continue;
 
-			for (const auto&[coord, _] : std::dynamic_pointer_cast<ObservationCenter>(object)->getObjectsAround())
-				m_tasks.insert(coord);
+			//for (const auto&[coord, _] : std::dynamic_pointer_cast<ObservationCenter>(object)->getObjectsAround())
+				//m_tasks.insert(coord);
 		}
-
-		/*std::queue<Coord> q;
-		q.push({ 0, 1 });
-		q.push({ 0, 2 });
-		q.push({ 0, 3 });
-		q.push({ 0, 4 });
-		q.push({ 1, 4 });
-		q.push({ 2, 4 });
-		q.push({ 3, 4 });
-		q.push({ 3, 3 });
-		q.push({ 3, 2 });
-		q.push({ 3, 1 });
-
-		m_routes.emplace(m_commanders[0], Route(std::move(q)));*/
 	}
 
 	void AI::addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object /* = nullptr */)
 	{
+		//if (typeid(*object) != typeid(Barrier))
+		//	object = nullptr;
+
 		if (auto&& [_, suc] = m_map.try_emplace(coord, object); suc)
 			m_mapUpdates.insert(coord);
 	}
 
 	void AI::work()
 	{
-		for (auto& commander : m_commanders)
+		for (auto& commander : m_commanders) // Collect data
 		{
 			auto&& objectsAround{ commander->getObjectsAround() };
 			for (const auto& [coord, object] : objectsAround)
 			{
-				if (m_map.find(coord) == std::end(m_map))
+				if (!isExplored(coord))
 					m_tasks.insert(coord);
 
 				addExploredPoint(coord, object);
 			}
 		}
 
-		for (auto& commander : m_commanders)
+		for (auto& commander : m_commanders) // Create route
+		{
 			if (typeid(*commander) == typeid(RobotCommander) && m_routes.find(commander) == std::end(m_routes))
 				for (auto& to : m_tasks)
-					if (auto&& route = makeRoute(commander->getPos(), to); !route.isFinished())
+					if (auto&& route = makeRoute(commander->getPos(), to); route)
 					{
 						m_routes.emplace(commander, route);
 
 						break;
 					}
+		}
 
-		for (auto&& [object, route] : m_routes)
-		{
-			if (route.isFinished())
+		for (auto it = std::begin(m_routes); it != std::end(m_routes);)
+			if (auto& [object, route] = *it; route.isFinished()) 
 			{
 				auto&& to = route.to();
 
-				// m_map.try_emplace(to, m_envDescr->getObject(to));
+				addExploredPoint(to); // envDescr->getObject
 				m_tasks.erase(to);
 
-				// TODO: try to give new task
-
-				continue;
+				m_routes.erase(it++);      
 			}
+			else 
+			{
+				auto scout = std::dynamic_pointer_cast<RobotScout>(object);
+				m_tasks.erase(scout->getPos());
+				scout->setPosition(route.getNext());
 
-			std::dynamic_pointer_cast<RobotScout>(object)->setPosition(route.getNext());
-		}
+				++it;
+			}
 	}
 } // namespace MobileRobots
