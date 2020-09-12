@@ -409,9 +409,11 @@
 					"powerSupplyLevel": 25
 				},
 				{
-					"type": "PowerGenerator",
-					"priority": 1,
-					"powerSupplyLevel": 25
+					"type": "Sensor",
+					"radius": 1,
+					"direction": 0,
+					"angle": 0,
+					"powerUsage": 8
 				},
 				{
 					"type": "PowerGenerator",
