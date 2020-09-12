@@ -43,7 +43,7 @@ namespace MobileRobots
         const auto height = m_envDescr->getHeight() * MobileRobots::IMAGE_SIZE;
         QMainWindow::setWindowIcon(QIcon(":/assets/icon.ico"));      
         QMainWindow::setFixedSize(width + 200, height);
-        QMainWindow::showFullScreen();
+        // QMainWindow::showFullScreen();
         QMainWindow::move(qApp->screens()[0]->size().width() / 4, 0);
 
         updateInfo({ 0, 0 });
@@ -76,6 +76,22 @@ namespace MobileRobots
 
     void MobileRobots::drawModules()
     {
+        static auto createEllipse = [&](const Coord& coord, const unsigned r, Qt::GlobalColor color, Qt::PenStyle penStyle, Qt::BrushStyle brushStyle)
+        {
+            auto&& item = new QGraphicsEllipseItem(
+                coord.x,
+                coord.y,
+                r * 2. * m_scaleFactor.x,
+                r * 2. * m_scaleFactor.y);
+
+            QPen pen(color);
+            pen.setStyle(penStyle);
+            item->setPen(pen);
+            item->setBrush(QBrush(color, brushStyle));
+
+            return item;
+        };
+
         for (const auto& object : m_envDescr->getObjects())
             if (typeid(*object) != typeid(Barrier) && typeid(*object) != typeid(InterestingObject))
             {
@@ -85,20 +101,12 @@ namespace MobileRobots
                     if (typeid(*module) == typeid(Sensor))
                     {
                         const auto& sensor = std::dynamic_pointer_cast<Sensor>(module);
-
                         if (sensor->getGraphicsItem())
                             m_scene->removeItem(sensor->getGraphicsItem());
 
-                        QPen pen(Qt::blue);
-                        pen.setStyle(Qt::PenStyle::DashLine);
+                        const auto& r = sensor->getRadius();
 
-                        auto item = m_scene->addEllipse(
-                            (obj->getX() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor.x),
-                            (obj->getY() + .5 - sensor->getRadius()) * static_cast<qreal>(m_scaleFactor.y),
-                            sensor->getRadius() * 2. * m_scaleFactor.x,
-                            sensor->getRadius() * 2. * m_scaleFactor.y,
-                            pen, QBrush(Qt::blue, Qt::BrushStyle::BDiagPattern));
-
+                        auto&& item = createEllipse(obj->getPos(), r, Qt::blue, Qt::PenStyle::DashLine, Qt::BrushStyle::BDiagPattern);                                           
                         if (typeid(*object) == typeid(ObservationCenter) || typeid(*object) == typeid(CommandCenter))
                         {
                             item->setStartAngle(sensor->getDirection() * 90 * 16);
@@ -106,25 +114,21 @@ namespace MobileRobots
                         }
 
                         sensor->setGraphicsItem(item);
+                        m_scene->addItem(item);
+                        item->setPos((obj->getX() + .5 - r) * m_scaleFactor.x, (obj->getY() + .5 - r) * m_scaleFactor.y);
                     }
                     else if (typeid(*module) == typeid(ManagerModule))
                     {
                         const auto& manager = std::dynamic_pointer_cast<ManagerModule>(module);
-
                         if (manager->getGraphicsItem())
                             m_scene->removeItem(manager->getGraphicsItem());
 
-                        QPen pen(Qt::red);
-                        pen.setStyle(Qt::PenStyle::DotLine);
+                        const auto& r = manager->getRadius();
 
-                        auto item = m_scene->addEllipse(
-                            (obj->getX() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor.x),
-                            (obj->getY() + .5 - manager->getRadius()) * static_cast<qreal>(m_scaleFactor.y),
-                            manager->getRadius() * 2. * m_scaleFactor.x,
-                            manager->getRadius() * 2. * m_scaleFactor.y,
-                            pen, QBrush(Qt::red, Qt::BrushStyle::Dense7Pattern));
-
+                        auto&& item = createEllipse(obj->getPos(), r, Qt::red, Qt::PenStyle::DotLine, Qt::BrushStyle::Dense7Pattern);
                         manager->setGraphicsItem(item);
+                        m_scene->addItem(item);
+                        item->setPos((obj->getX() + .5 - r) * m_scaleFactor.x, (obj->getY() + .5 - r) * m_scaleFactor.y);
                     }
                 }
             }
