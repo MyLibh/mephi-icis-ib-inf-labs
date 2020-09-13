@@ -14,7 +14,17 @@ namespace MobileRobots
 	class AI final : public std::enable_shared_from_this<AI>
 	{
 	private:
-		Route makeRoute(const Coord& from, const Coord& to);
+		Route makeRoute(const Coord& from, const Coord& to, const Coord& owner, const unsigned ownerRadius = std::numeric_limits<unsigned>::max()) const;
+
+		inline Route makeRoute(const Coord& from, const Coord& to) const { return std::move(makeRoute(from, to, from)); }
+
+		void explore();
+
+		void move();
+
+		void addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object = nullptr);
+
+		inline bool hasTask(std::shared_ptr<MapObject> object) { return m_routes.find(object) == std::end(m_routes); }
 
 	public:
 		AI() = delete;
@@ -29,7 +39,7 @@ namespace MobileRobots
 
 		inline bool isExplored(const Coord& coord) const noexcept { return m_map.find(coord) != std::end(m_map); }		
 
-		void addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object = nullptr);
+		
 
 		void work();
 

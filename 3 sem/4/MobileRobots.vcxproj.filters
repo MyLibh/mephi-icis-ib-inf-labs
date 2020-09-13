@@ -157,6 +157,9 @@
     <ClInclude Include="src\Route.hpp">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
+    <ClInclude Include="src\Math.hpp">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\MobileRobots.hpp">

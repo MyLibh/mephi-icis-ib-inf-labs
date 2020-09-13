@@ -13,7 +13,14 @@
 #ifndef __COORD_HPP_INCLUDED__
 #define __COORD_HPP_INCLUDED__
 
+#include "Math.hpp"
+
 #include <functional>
+
+namespace detail
+{
+	inline constexpr auto maxSubMin(const uint32_t a, const uint32_t b) noexcept { return std::max(a, b) - std::min(a, b); }
+} // namespace detail
 
 namespace MobileRobots
 {
@@ -21,6 +28,8 @@ namespace MobileRobots
 	{
 		uint32_t x;
 		uint32_t y;
+
+		inline constexpr auto distanceTo(const Coord& other) const noexcept { return Math::hypot(detail::maxSubMin(x, other.x), detail::maxSubMin(y, other.y)); }
 	};
 
 	/**

@@ -124,6 +124,7 @@
     <ClInclude Include="src\ManagerModule.hpp" />
     <ClInclude Include="src\MapLoader.hpp" />
     <ClInclude Include="src\MapObject.hpp" />
+    <ClInclude Include="src\Math.hpp" />
     <ClInclude Include="src\RobotCommander.hpp" />
     <ClInclude Include="src\Route.hpp" />
     <ClInclude Include="src\Utility.hpp" />
