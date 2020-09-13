@@ -24,7 +24,7 @@ namespace MobileRobots
 
 		void addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object = nullptr);
 
-		inline bool hasTask(std::shared_ptr<MapObject> object) { return m_routes.find(object) == std::end(m_routes); }
+		inline bool hasTask(std::shared_ptr<MapObject> object) { return m_routes.find(object) != std::end(m_routes); }
 
 	public:
 		AI() = delete;
@@ -38,8 +38,6 @@ namespace MobileRobots
 		inline auto getMapUpdates() noexcept { return std::move(m_mapUpdates); }
 
 		inline bool isExplored(const Coord& coord) const noexcept { return m_map.find(coord) != std::end(m_map); }		
-
-		
 
 		void work();
 

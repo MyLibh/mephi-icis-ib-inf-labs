@@ -99,6 +99,12 @@ namespace MobileRobots
 			}
 	}
 
+	void AI::addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object /* = nullptr */)
+	{
+		if (auto&& [_, suc] = m_map.try_emplace(coord, object); suc)
+			m_mapUpdates.insert(coord);
+	}
+
 	AI::AI(std::shared_ptr<EnvironmentDescriptor> envDescr) :
 		m_envDescr(envDescr),
 		m_map(),
@@ -127,22 +133,13 @@ namespace MobileRobots
 		}
 	}
 
-	void AI::addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object /* = nullptr */)
-	{
-		//if (typeid(*object) != typeid(Barrier))
-		//	object = nullptr;
-
-		if (auto&& [_, suc] = m_map.try_emplace(coord, object); suc)
-			m_mapUpdates.insert(coord);
-	}
-
 	void AI::work()
 	{
 		explore();
 
 		for (auto& commander : m_commanders) // Create route
 		{
-			if (typeid(*commander) == typeid(RobotCommander) && hasTask(std::static_pointer_cast<MapObject>(commander)))
+			if (typeid(*commander) == typeid(RobotCommander) && !hasTask(std::static_pointer_cast<MapObject>(commander)))
 				for (auto& to : m_tasks)
 					if (auto&& route = makeRoute(commander->getPos(), to); route)
 					{
