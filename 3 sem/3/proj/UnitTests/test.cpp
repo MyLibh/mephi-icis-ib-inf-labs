@@ -1,6 +1,6 @@
 #include "pch.hpp"
-#include "../../src/DiceGroup.hpp"
-#include "../../src/DiceGroup.cpp"
+#include "../../src/dynamic/DiceGroup.hpp"
+#include "../../src/dynamic/DiceGroup.cpp"
 
 struct DiceGroupTest : testing::Test
 {

@@ -4,7 +4,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "../include/generator.hpp"
+#include "../../include/generator.hpp"
 
 using uchar_t = unsigned char;
 
