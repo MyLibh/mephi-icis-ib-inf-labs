@@ -6,6 +6,15 @@
 
 namespace Math
 {
+	namespace Constants
+	{
+		template<typename _Ty, typename = std::enable_if_t<std::is_arithmetic_v<_Ty>>>
+		constexpr _Ty pi = _Ty(3.1415926535897932385L);
+	}
+
+	template<typename _Ty, typename = std::enable_if_t<std::is_arithmetic_v<_Ty>>>
+	constexpr auto rad2deg(const _Ty rad) noexcept { return rad / Constants::pi<_Ty> * 180; }
+
 	constexpr double __vectorcall sqrtNewtonRaphson(const double x, const double cur, const double prev) noexcept
 	{
 		return cur == prev ?

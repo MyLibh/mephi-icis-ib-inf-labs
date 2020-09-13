@@ -9,6 +9,16 @@
 #include <typeinfo>
 #include <algorithm>
 
+namespace detail
+{
+    inline bool isInSector(const MobileRobots::Coord& coord, const unsigned radius, const unsigned startAngle, const unsigned angle) noexcept
+    {
+        auto ang = Math::rad2deg(std::atan(coord.y / coord.x));
+
+        return Math::hypot(coord.x, coord.y) < radius && startAngle <= ang && ang <= startAngle + angle;
+    }
+} // namespace detail
+
 namespace MobileRobots
 {
     void ObservationCenter::initModules()
@@ -54,7 +64,20 @@ namespace MobileRobots
             {
                 auto sensor{ std::dynamic_pointer_cast<Sensor>(module) };
 
-                // TODO: check in sector
+                const auto r = sensor->getRadius();
+
+                auto x = getX();
+                const auto xMin = x < r ? 0U : x - r;
+                const auto xMax = std::min(x + r, sEnvDesc->getWidth() - 1);
+
+                auto y = getY();
+                const auto yMin = y < r ? 0U : y - r;
+                const auto yMax = std::min(y + r, sEnvDesc->getHeight() - 1);
+
+                for (x = xMin; x <= xMax; ++x)
+                    for (y = yMin; y <= yMax; ++y)
+                        if (const Coord coord{ x, y }; coord != m_pos && detail::isInSector(coord, r, sensor->getDirection() * 90, sensor->getAngle()))
+                            objectsAround.emplace(coord, sEnvDesc->getObject(coord));
             }
 
         return std::move(objectsAround);
