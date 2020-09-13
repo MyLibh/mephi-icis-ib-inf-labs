@@ -35,12 +35,20 @@ public:
 	inline DiceGroup(const size_t size) :
 		m_size(size),
 		m_dices()
-	{ roll(); }
+	{
+		if (m_size > m_dices.size())
+			throw std::invalid_argument("Wrong size"); 
+		
+		roll(); 
+	}
 
 	inline DiceGroup(const size_t size, std::array<uchar_t, DiceGroup::MAX_DICES_NUM> dices) :
 		m_size(size),
 		m_dices(std::move(dices))
-	{ }
+	{
+		if (m_size > m_dices.size())
+			throw std::invalid_argument("Wrong size");
+	}
 
 	inline DiceGroup& operator=(const DiceGroup& other)
 	{
