@@ -11,8 +11,7 @@ namespace MobileRobots
 		RobotScout() = delete;
 
 		inline RobotScout(const std::string_view description, const unsigned powerUsage, const unsigned maxSlots, const unsigned price, const std::vector<std::shared_ptr<Module>>& modules, const Coord& coord) :
-			ObservationCenter(description, powerUsage, maxSlots, price, modules, coord),
-			m_isFree{}
+			ObservationCenter(description, powerUsage, maxSlots, price, modules, coord)
 		{ }
 
 		inline ~RobotScout() noexcept override = default;
@@ -25,9 +24,6 @@ namespace MobileRobots
 		inline void setPosition(const Coord& coord) noexcept { m_pos = coord; }
 
 		void redrawModules(const Coord& scaleFactor) noexcept;
-
-	protected:
-		bool m_isFree;
 	};
 } // namespace MobileRobots
 

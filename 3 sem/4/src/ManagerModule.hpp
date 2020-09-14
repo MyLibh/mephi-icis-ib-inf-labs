@@ -15,14 +15,20 @@ namespace MobileRobots
 	public:
 		static void setAI(std::shared_ptr<AI> ai) noexcept;
 
+	private:
+		inline bool canAddDevice(std::shared_ptr<ObservationCenter> newDevice) const noexcept
+		{ 
+			return (static_cast<size_t>(m_maxDevices) > m_devices.size() && 
+				std::find(std::begin(m_devices), std::end(m_devices), newDevice) == std::end(m_devices)); 
+		}
+
 	public:
 		ManagerModule() = delete;
 
 		inline ManagerModule(const unsigned maxDevices, const unsigned powerUsage, const unsigned radius, const unsigned priority) noexcept :
 			EnergyConsumer(powerUsage, radius, priority),
 			m_maxDevices(maxDevices),
-			m_devices(),
-			m_isBusy{}
+			m_devices()
 		{ }
 
 		inline QString toString() const override { return (EnergyConsumer::toStringHelper("ManagerModule") + "<b>devices:</b> %1/%2<br/>").arg(m_devices.size()).arg(m_maxDevices); }
@@ -30,9 +36,7 @@ namespace MobileRobots
 		[[nodiscard]]
 		inline auto& getDevices() const noexcept { return m_devices; }
 
-		inline bool isBusy() const noexcept { return m_isBusy; }
-
-		inline bool addDevice(std::shared_ptr<ObservationCenter> newDevice) { return (static_cast<size_t>(m_maxDevices) < m_devices.size() && std::find(std::begin(m_devices), std::end(m_devices), newDevice) == std::end(m_devices)); }
+		inline bool addDevice(std::shared_ptr<ObservationCenter> newDevice) { return canAddDevice(newDevice) ? m_devices.emplace_back(newDevice), true : false; }
 
 		bool isExplored(const Coord& coord) const noexcept;
 
@@ -42,7 +46,6 @@ namespace MobileRobots
 	private:
 		unsigned                                        m_maxDevices;
 		std::vector<std::shared_ptr<ObservationCenter>> m_devices;
-		bool                                            m_isBusy;
 	};
 } // namespace MobileRobots
 

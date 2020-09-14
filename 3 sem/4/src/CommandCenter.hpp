@@ -6,7 +6,7 @@
 
 namespace MobileRobots
 {
-	class CommandCenter : virtual public ObservationCenter
+	class CommandCenter : virtual public ObservationCenter, public std::enable_shared_from_this<CommandCenter>
 	{
 	private:
 		bool aquireManager() noexcept;
@@ -33,11 +33,10 @@ namespace MobileRobots
 		[[nodiscard]]
 		virtual std::map<Coord, std::shared_ptr<MapObject>> getObjectsAround() const override;
 
-		bool aquireDevice();
+		void aquireDevices() noexcept;
 
 	protected:
 		std::shared_ptr<ManagerModule> m_manager;
-		
 	};
 } // namespace MobileRobots
 

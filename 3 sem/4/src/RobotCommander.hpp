@@ -6,7 +6,7 @@
 
 namespace MobileRobots
 {
-	class RobotCommander final : public RobotScout, public CommandCenter, public std::enable_shared_from_this<RobotCommander>
+	class RobotCommander final : public RobotScout, public CommandCenter
 	{
 	public:
 		RobotCommander() = delete;
@@ -22,12 +22,7 @@ namespace MobileRobots
 		inline QString toString() const override { return ObservationCenter::toStringHelper("RobotCommander"); }
 
 		[[nodiscard]]
-		std::shared_ptr<RobotScout> getControlledDevice() const;
-
-		[[nodiscard]]
 		std::map<Coord, std::shared_ptr<MapObject>> getObjectsAround() const override;
-
-		bool addControlledDevice(std::shared_ptr<RobotScout> robotScout);
 	};
 } // namespace MobileRobots
 
