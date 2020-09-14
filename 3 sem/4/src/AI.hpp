@@ -3,6 +3,7 @@
 
 #include "CommandCenter.hpp"
 #include "Route.hpp"
+#include "RobotScout.hpp"
 
 #include <map>
 #include <set>
@@ -16,7 +17,7 @@ namespace MobileRobots
 	private:
 		Route makeRoute(const Coord& from, const Coord& to, const Coord& owner, const unsigned ownerRadius = std::numeric_limits<unsigned>::max()) const;
 
-		inline Route makeRoute(const Coord& from, const Coord& to) const { return std::move(makeRoute(from, to, from)); }
+		inline Route makeRoute(const Coord& from, const Coord& to) const { return makeRoute(from, to, from); }
 
 		void explore();
 
@@ -24,7 +25,11 @@ namespace MobileRobots
 
 		void addExploredPoint(const Coord& coord, std::shared_ptr<MapObject> object = nullptr);
 
-		inline bool hasTask(std::shared_ptr<MapObject> object) { return m_routes.find(object) != std::end(m_routes); }
+		inline bool hasTask(std::shared_ptr<RobotScout> scout) { return m_routes.find(scout) != std::end(m_routes); }
+
+		bool makeTask(std::shared_ptr<CommandCenter> commander);
+
+		bool makeTask(std::shared_ptr<CommandCenter> commander, std::shared_ptr<ObservationCenter> device);
 
 	public:
 		AI() = delete;
@@ -41,14 +46,16 @@ namespace MobileRobots
 
 		void work();
 
+		inline bool finished() const noexcept { return m_finished; }
+
 	private:
-		std::shared_ptr<EnvironmentDescriptor>                m_envDescr;
-		std::map<Coord, const std::shared_ptr<MapObject>>     m_map;
-		std::set<Coord>                                       m_tasks;
-		std::vector<std::shared_ptr<ManagerModule>>           m_managers;
-		std::vector<std::shared_ptr<CommandCenter>>           m_commanders;
-		std::unordered_map<std::shared_ptr<MapObject>, Route> m_routes;
-		std::set<Coord>                                       m_mapUpdates;
+		std::shared_ptr<EnvironmentDescriptor>                 m_envDescr;
+		std::map<Coord, std::shared_ptr<MapObject>>            m_map;
+		std::set<Coord>                                        m_tasks;
+		std::vector<std::shared_ptr<CommandCenter>>            m_commanders;
+		std::unordered_map<std::shared_ptr<RobotScout>, Route> m_routes;
+		std::set<Coord>                                        m_mapUpdates;
+		bool                                                   m_finished;
 	};
 } // namespace MobileRobots
 

@@ -3,7 +3,6 @@
 
 #include "AI.hpp"
 #include "EnvironmentDescriptor.hpp"
-#include "CommandCenter.hpp"
 #include "Coord.hpp"
 #include "Utility.hpp"
 
@@ -18,24 +17,24 @@ namespace MobileRobots
 		std::unordered_map<Coord, Coord> prev;
 		std::queue<Coord>                queue;
 	
-		static auto tryAdd = [&](const Coord cur, const Coord coord)
+		static auto tryAdd = [&](const Coord& cur, const Coord& coord)
 		{
-			if (m_envDescr->isInField(coord) && !used[coord] && isExplored(coord) && m_map.at(coord) == nullptr && owner.distanceTo(coord) < ownerRadius)
+			if (m_envDescr->isInField(coord) && used.find(coord) == std::end(used) && isExplored(coord) && m_map.at(coord) == nullptr && owner.distanceTo(coord) <= ownerRadius)
 			{
 				queue.push(coord);
 
-				used[coord] = true;
+				used.emplace(coord, true);
 
-				prev[coord] = cur;
+				prev.emplace(coord, cur);
 			}
 		};
 
 		queue.push(from);
-		used[from] = true;
-		prev[from] = { -1U, -1U };
+		used.emplace(from, true);
+		prev.insert({ from, { -1U, -1U } });
 		while (!queue.empty())
 		{
-			auto&& cur = queue.front();
+			auto cur = queue.front();
 			queue.pop();
 
 			tryAdd(cur, { cur.x - 1, cur.y     }); // left
@@ -49,10 +48,10 @@ namespace MobileRobots
 
 		Coord cur = to;
 		std::vector<Coord> revPath;
-		while (prev[cur] != Coord{ -1U, -1U })
+		while (prev.at(cur) != Coord{ -1U, -1U })
 		{
 			revPath.push_back(cur);
-			cur = prev[cur];
+			cur = prev.at(cur);
 		}
 
 		std::queue<Coord> path;
@@ -66,6 +65,9 @@ namespace MobileRobots
 	{
 		for (auto& commander : m_commanders)
 		{
+			if (typeid(*commander) == typeid(RobotCommander))
+				commander->aquireDevices();
+
 			auto&& objectsAround{ commander->getObjectsAround() };
 			for (const auto& [coord, object] : objectsAround)
 			{
@@ -74,6 +76,9 @@ namespace MobileRobots
 
 				addExploredPoint(coord, object);
 			}
+
+			if (typeid(*commander) == typeid(RobotCommander))
+				const_cast<std::vector<std::shared_ptr<ObservationCenter>>&>(commander->getManager()->getDevices()).clear();
 		}
 	}
 
@@ -105,23 +110,56 @@ namespace MobileRobots
 			m_mapUpdates.insert(coord);
 	}
 
+	bool AI::makeTask(std::shared_ptr<CommandCenter> commander)
+	{
+		if (hasTask(std::dynamic_pointer_cast<RobotScout>(commander)))
+			return false;
+
+		for (auto& to : m_tasks)
+			if (auto&& route = makeRoute(commander->getPos(), to); route)
+			{
+				m_routes.emplace(std::dynamic_pointer_cast<RobotScout>(commander), route);
+
+				return true;
+			}
+
+		return false;
+	}
+
+	bool AI::makeTask(std::shared_ptr<CommandCenter> commander, std::shared_ptr<ObservationCenter> device)
+	{
+		if (hasTask(std::dynamic_pointer_cast<RobotScout>(device)))
+			return false;
+
+		for (auto& to : m_tasks)
+			if (auto&& route = makeRoute(device->getPos(), to, commander->getPos(), commander->getManager()->getRadius()); route)
+			{
+				m_routes.emplace(std::dynamic_pointer_cast<RobotScout>(device), route);
+
+				return true;
+			}
+
+		return false;
+	}
+
 	AI::AI(std::shared_ptr<EnvironmentDescriptor> envDescr) :
 		m_envDescr(envDescr),
 		m_map(),
 		m_tasks(),
-		m_managers(),
 		m_commanders(),
-		m_routes()
+		m_routes(),
+		m_finished{}
 	{
 		for (const auto& object : m_envDescr->getObjects())
 		{
 			if (typeid(*object) == typeid(CommandCenter) || typeid(*object) == typeid(RobotCommander))
 			{
 				auto& commandCenter{ std::dynamic_pointer_cast<CommandCenter>(object) };
-				if (commandCenter->getManager())
-					m_managers.push_back(commandCenter->getManager());
+				if (typeid(*object) == typeid(CommandCenter))
+					commandCenter->aquireDevices();
 
-				m_commanders.push_back(commandCenter);
+				if (commandCenter->getManager())
+					m_commanders.push_back(commandCenter);
 			}
 
 			if (typeid(*object) == typeid(RobotScout) || typeid(*object) == typeid(RobotCommander))
@@ -135,20 +173,21 @@ namespace MobileRobots
 
 	void AI::work()
 	{
+		move();
+
 		explore();
 
-		for (auto& commander : m_commanders) // Create route
+		for (auto& commander : m_commanders)
 		{
-			if (typeid(*commander) == typeid(RobotCommander) && !hasTask(std::static_pointer_cast<MapObject>(commander)))
-				for (auto& to : m_tasks)
-					if (auto&& route = makeRoute(commander->getPos(), to); route)
-					{
-						m_routes.emplace(commander, route);
-
-						break;
-					}
+			if (typeid(*commander) == typeid(RobotCommander))
+				makeTask(commander);
+			else if (typeid(*commander) == typeid(CommandCenter))
+				for (auto& device : commander->getManager()->getDevices())
+					if (typeid(*device) == typeid(RobotScout))
+						makeTask(commander, device);
 		}
 
-		move();
+		if (m_tasks.empty())
+			m_finished = true;
 	}
 } // namespace MobileRobots
