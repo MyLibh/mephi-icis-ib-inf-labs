@@ -6,16 +6,22 @@
 #include "Sensor.hpp"
 #include "EnvironmentDescriptor.hpp"
 
-#include <typeinfo>
 #include <algorithm>
 
 namespace detail
 {
-    inline bool isInSector(const MobileRobots::Coord& coord, const unsigned radius, const unsigned startAngle, const unsigned angle) noexcept
+    inline bool isInSector(const MobileRobots::Coord& origin, const MobileRobots::Coord& coord, const unsigned radius, const unsigned startAngle, const unsigned angle) noexcept
     {
-        auto ang = Math::rad2deg(std::atan(coord.y / coord.x));
+        double vecX = (int)coord.x - (int)origin.x;
+        double vecY = (int)origin.y - (int)coord.y;
 
-        return Math::hypot(coord.x, coord.y) < radius && startAngle <= ang && ang <= startAngle + angle;
+        auto ang = Math::rad2deg(std::acos((vecX * (double)radius) / (Math::hypot(vecX, vecY) * Math::hypot((double)radius, 0.l))));
+        if (vecY <= 0)
+            ang = 360 - ang;
+
+        // TODO: check 0-case
+
+        return origin.distanceTo(coord) <= radius && startAngle <= ang && ang <= startAngle + angle;
     }
 } // namespace detail
 
@@ -76,7 +82,7 @@ namespace MobileRobots
 
                 for (x = xMin; x <= xMax; ++x)
                     for (y = yMin; y <= yMax; ++y)
-                        if (const Coord coord{ x, y }; coord != m_pos && detail::isInSector(coord, r, sensor->getDirection() * 90, sensor->getAngle()))
+                        if (const Coord coord{ x, y }; coord != m_pos && detail::isInSector(m_pos, coord, r, sensor->getDirection() * 90, sensor->getAngle()))
                             objectsAround.emplace(coord, sEnvDesc->getObject(coord));
             }
 

@@ -14,7 +14,7 @@
 #include <QScreen>
 #include <QDebug>
 
-inline constexpr auto CONFIG_NAME{ ":/cfg/check_cc.json" };
+inline constexpr auto CONFIG_NAME{ ":/cfg/map.json" };
 
 namespace MobileRobots
 {
@@ -284,7 +284,7 @@ namespace MobileRobots
         initMap();
 
         connect(m_timer.get(), &QTimer::timeout, this, &MobileRobots::update);
-        m_timer->start(50);
+        m_timer->start(500);
 
         ManagerModule::setAI(m_ai->shared_from_this());
 
