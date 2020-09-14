@@ -29,6 +29,16 @@ namespace MobileRobots
 		uint32_t x;
 		uint32_t y;
 
+		inline constexpr Coord() noexcept :
+			x{},
+			y{}
+		{ }
+
+		inline constexpr Coord(const uint32_t x, const uint32_t y) noexcept :
+			x(x),
+			y(y)
+		{ }
+
 		inline constexpr auto distanceTo(const Coord& other) const noexcept { return Math::hypot(detail::maxSubMin(x, other.x), detail::maxSubMin(y, other.y)); }
 	};
 
