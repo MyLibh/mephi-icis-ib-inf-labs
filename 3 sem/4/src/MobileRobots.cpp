@@ -12,8 +12,9 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QScreen>
+#include <QDebug>
 
-inline constexpr auto CONFIG_NAME{ ":/cfg/config.json" };
+inline constexpr auto CONFIG_NAME{ ":/cfg/check_cc.json" };
 
 namespace MobileRobots
 {
@@ -139,15 +140,15 @@ namespace MobileRobots
         loadImages();
 
         m_map = map_t(m_envDescr->getWidth());
-        for (size_t i{}; i < m_map.size(); ++i)
+        for (uint32_t i{}; i < m_map.size(); ++i)
         {
             const auto size = m_envDescr->getHeight();
 
             m_map[i].resize(size);
-            for (size_t j{}; j < size; ++j)
+            for (uint32_t j{}; j < size; ++j)
             {
                 m_map[i][j] = m_scene->addPixmap(m_images.at("DarkGrass"));
-                m_map[i][j]->setPos(static_cast<qreal>(i) * m_scaleFactor.x, static_cast<qreal>(j) * m_scaleFactor.y);
+                m_map[i][j]->setPos(i * static_cast<qreal>(m_scaleFactor.x), j * static_cast<qreal>(m_scaleFactor.y));
             }
         }  
 
@@ -210,11 +211,11 @@ namespace MobileRobots
         m_scaleFactor.x = canvas->width() / m_envDescr->getWidth();
         m_scaleFactor.y = canvas->height() / m_envDescr->getHeight();
 
-        for (size_t i{}; i < m_map.size(); ++i)
-            for (size_t j{}; j < m_map[0].size(); ++j)
+        for (uint32_t i{}; i < m_map.size(); ++i)
+            for (uint32_t j{}; j < m_map[0].size(); ++j)
             {
                 m_map[i][j]->setPixmap(m_map[i][j]->pixmap().scaled(m_scaleFactor.x, m_scaleFactor.y));
-                m_map[i][j]->setPos(static_cast<qreal>(i) * m_scaleFactor.x, static_cast<qreal>(j) * m_scaleFactor.y);
+                m_map[i][j]->setPos(i * static_cast<qreal>(m_scaleFactor.x), j * static_cast<qreal>(m_scaleFactor.y));
             }
 
         for (auto& line : m_grid[0])
@@ -283,7 +284,7 @@ namespace MobileRobots
         initMap();
 
         connect(m_timer.get(), &QTimer::timeout, this, &MobileRobots::update);
-        m_timer->start(100);
+        m_timer->start(50);
 
         ManagerModule::setAI(m_ai->shared_from_this());
 
@@ -313,5 +314,8 @@ namespace MobileRobots
         m_ai->work();
 
         draw();
+
+        if (m_ai->finished())
+            qDebug() << "FINISHED";
     }
 } // namespace MobileRobots
