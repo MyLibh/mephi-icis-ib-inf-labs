@@ -15,6 +15,9 @@ namespace Math
 	template<typename _Ty, typename = std::enable_if_t<std::is_arithmetic_v<_Ty>>>
 	constexpr auto rad2deg(const _Ty rad) noexcept { return rad / Constants::pi<_Ty> * 180; }
 
+	template<typename _Ty, typename = std::enable_if_t<std::is_arithmetic_v<_Ty>>>
+	constexpr auto deg2rad(const _Ty deg) noexcept { return deg / 180 * Constants::pi<_Ty>; }
+
 	constexpr double __vectorcall sqrtNewtonRaphson(const double x, const double cur, const double prev) noexcept
 	{
 		return cur == prev ?
