@@ -8,11 +8,11 @@
 
 signed main(int argc, char* argv[])
 {
+    QApplication app(argc, argv);
+
     int rc{};
     try
     {
-        QApplication app(argc, argv);
-
         MobileRobots::MobileRobots w;
         w.show();
 
