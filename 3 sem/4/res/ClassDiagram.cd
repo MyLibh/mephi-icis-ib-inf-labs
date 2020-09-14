@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MobileRobots::EnvironmentDescriptor" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAABAEACAAAIAABACAUAAAAAAAAQACkAAAAAAAAAAA=</HashCode>
+      <FileName>src\EnvironmentDescriptor.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::AI" Collapsed="true">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CQAAACAIAAAAAACASgAAAgAEEAAAAAAANAgFQEAAAAA=</HashCode>
+      <FileName>src\AI.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::MobileRobots" Collapsed="true">
+    <Position X="9.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAGAACAAAAAAAAAgCAIAIsAQEAAQYAEgAIAAQAAkAAQ=</HashCode>
+      <FileName>src\MobileRobots.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::EnergyConsumer" Collapsed="true">
+    <Position X="3.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAUgAAAQAAAAABAAAQAAAIAAAiAAAAACAAAA=</HashCode>
+      <FileName>src\EnergyConsumer.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::ManagerModule" Collapsed="true">
+    <Position X="5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>GAAAAAAAQAAAAAAAAgAABAAAAAAAAAAAQAAACBAAEAE=</HashCode>
+      <FileName>src\ManagerModule.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::Module" Collapsed="true">
+    <Position X="2.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAQAQAACAAAEAAABBAAAABAAAAAAAAACAAACAA=</HashCode>
+      <FileName>src\Module.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::PowerGenerator" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgACAAAAABAAAAAAEAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>src\PowerGenerator.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::Sensor" Collapsed="true">
+    <Position X="2.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAEgAAQABEAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Sensor.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::MapLoader" Collapsed="true">
+    <Position X="13.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\MapLoader.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::Route" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAMAAAAgAAAAAAIAAAAACAAQAAAA=</HashCode>
+      <FileName>src\Route.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::Barrier" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAABAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Barrier.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::CommandCenter" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAgAAAJAIgAAAAAgAAACAAAAAAAAQ=</HashCode>
+      <FileName>src\CommandCenter.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::InterestingObject" Collapsed="true">
+    <Position X="7.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAABAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\InterestingObject.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::MapObject" Collapsed="true">
+    <Position X="3.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAQACAAAAAAAABAAQQAAoAAAAAAAAAGAAAAA=</HashCode>
+      <FileName>src\MapObject.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::RobotCommander" Collapsed="true">
+    <Position X="3.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAABABAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>src\RobotCommander.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::ObservationCenter" Collapsed="true">
+    <Position X="3.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAgCAAAQAgAABAgAAABxFAAAAAIIAAAAAAAACAEEA=</HashCode>
+      <FileName>src\ObservationCenter.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MobileRobots::RobotScout" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABgAAABAACAAAAAEAQAAAAAAAAAAA=</HashCode>
+      <FileName>src\RobotScout.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="MobileRobots::Coord" Collapsed="true">
+    <Position X="9.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAQABgAAAAAAA=</HashCode>
+      <FileName>src\Coord.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="std::hash&lt;MobileRobots::Coord&gt;" Collapsed="true">
+    <Position X="11.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Coord.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MobileRobots::Utility::ReverseWrapper&lt;_Ty&gt;" Collapsed="true">
+    <Position X="13.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>src\Utility.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
