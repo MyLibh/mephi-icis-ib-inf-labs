@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -167,10 +167,19 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <None Include="cfg\config.json">
+    <None Include="cfg\aquire_oc.json">
       <Filter>Config</Filter>
     </None>
-    <None Include="cfg\empty_map.json">
+    <None Include="cfg\aquire_rs.json">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="cfg\map.json">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="cfg\empty.json">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="cfg\check_cc.json">
       <Filter>Config</Filter>
     </None>
   </ItemGroup>

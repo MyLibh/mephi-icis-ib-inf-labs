@@ -1,0 +1,64 @@
+{
+  "width": 5,
+  "height": 5,
+  "objects": [
+    {
+      "type": "RobotCommander",
+      "x": 0,
+      "y": 0,
+      "description": "",
+      "powerUsage": 10,
+      "maxSlots": 5,
+      "price": 100,
+      "modules": [
+        {
+          "type": "PowerGenerator",
+          "priority": 1,
+          "powerSupplyLevel": 25
+        },
+        {
+          "type": "PowerGenerator",
+          "priority": 1,
+          "powerSupplyLevel": 25
+        },
+        {
+          "type": "Sensor",
+          "radius": 1,
+          "direction": 0,
+          "angle": 3,
+          "powerUsage": 8
+        },
+        {
+          "type": "ManagerModule",
+          "radius": 2,
+          "maxDevices": 0,
+          "powerUsage": 10,
+          "priority": 1
+        }
+      ]
+    },
+    {
+      "type": "ObservationCenter",
+      "x": 3,
+      "y": 2,
+      "description": "ObservationCenterDescription",
+      "powerUsage": 10,
+      "price": 1000,
+      "maxSlots": 5,
+      "modules": [
+        {
+          "type": "PowerGenerator",
+          "priority": 1,
+          "powerSupplyLevel": 100
+        },
+        {
+          "type": "Sensor",
+          "radius": 2,
+          "direction": 3,
+          "angle": 180,
+          "powerUsage": 8
+        }
+      ]
+    }
+  ]
+}

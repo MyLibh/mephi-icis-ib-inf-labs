@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
+        <file>cfg/aquire_oc.json</file>
+        <file>cfg/aquire_rs.json</file>
+        <file>cfg/empty.json</file>
+        <file>cfg/map.json</file>
         <file>assets/images/command_center.png</file>
         <file>assets/images/dark_barrier.png</file>
         <file>assets/images/dark_grass.png</file>
@@ -10,8 +14,6 @@
         <file>assets/images/observation_center.png</file>
         <file>assets/images/robot_commander.png</file>
         <file>assets/images/robot_scout.png</file>
-        <file>cfg/empty_map.json</file>
-        <file>cfg/config.json</file>
         <file>assets/icon.ico</file>
         <file>assets/images/scaled/command_center.png</file>
         <file>assets/images/scaled/dark_barrier.png</file>
@@ -23,5 +25,6 @@
         <file>assets/images/scaled/observation_center.png</file>
         <file>assets/images/scaled/robot_commander.png</file>
         <file>assets/images/scaled/robot_scout.png</file>
+        <file>cfg/check_cc.json</file>
     </qresource>
 </RCC>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -136,8 +136,11 @@
     <ClInclude Include="src\Sensor.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cfg\config.json" />
-    <None Include="cfg\empty_map.json" />
+    <None Include="cfg\aquire_oc.json" />
+    <None Include="cfg\aquire_rs.json" />
+    <None Include="cfg\check_cc.json" />
+    <None Include="cfg\empty.json" />
+    <None Include="cfg\map.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
