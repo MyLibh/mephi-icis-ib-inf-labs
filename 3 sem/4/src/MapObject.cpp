@@ -10,6 +10,6 @@ namespace MobileRobots
 
 	void MapObject::setEnvironmentDescriptor(std::shared_ptr<EnvironmentDescriptor> envDesc) noexcept
 	{
-		MapObject::sEnvDesc = envDesc;
+		MapObject::sEnvDesc = std::move(envDesc);
 	}
 }
