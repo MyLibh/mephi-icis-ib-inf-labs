@@ -141,6 +141,7 @@
     <None Include="cfg\check_cc.json" />
     <None Include="cfg\empty.json" />
     <None Include="cfg\map.json" />
+    <None Include="res\ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

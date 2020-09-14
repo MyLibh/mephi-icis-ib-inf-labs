@@ -155,7 +155,7 @@
 				},
 				{
 					"type": "ManagerModule",
-					"radius": 3,
+					"radius": 4,
 					"maxDevices": 44,
 					"powerUsage": 12,
 					"priority": 1

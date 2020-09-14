@@ -24,7 +24,7 @@
         {
           "type": "Sensor",
           "radius": 1,
-          "direction": 0,
+          "direction": 3,
           "angle": 30,
           "powerUsage": 8
         },

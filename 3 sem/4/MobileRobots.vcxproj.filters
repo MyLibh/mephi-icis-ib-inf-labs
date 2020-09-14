@@ -182,5 +182,6 @@
     <None Include="cfg\check_cc.json">
       <Filter>Config</Filter>
     </None>
+    <None Include="res\ClassDiagram.cd" />
   </ItemGroup>
 </Project>
