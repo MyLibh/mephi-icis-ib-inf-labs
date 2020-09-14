@@ -16,10 +16,11 @@ namespace detail
         double vecY = (int)origin.y - (int)coord.y;
 
         auto ang = Math::rad2deg(std::acos((vecX * (double)radius) / (Math::hypot(vecX, vecY) * Math::hypot((double)radius, 0.l))));
-        if (vecY <= 0)
+        if (vecY < 0)
             ang = 360 - ang;
 
-        // TODO: check 0-case
+        if (ang == 0)
+            return origin.distanceTo(coord) <= radius && (startAngle == ang || ang == startAngle + angle || ang == (startAngle + angle) % 360);
 
         return origin.distanceTo(coord) <= radius && startAngle <= ang && ang <= startAngle + angle;
     }

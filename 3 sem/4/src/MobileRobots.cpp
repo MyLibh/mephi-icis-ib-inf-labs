@@ -284,7 +284,7 @@ namespace MobileRobots
         initMap();
 
         connect(m_timer.get(), &QTimer::timeout, this, &MobileRobots::update);
-        m_timer->start(500);
+        m_timer->start(50);
 
         ManagerModule::setAI(m_ai->shared_from_this());
 
