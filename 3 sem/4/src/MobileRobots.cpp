@@ -12,7 +12,6 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QScreen>
-#include <QDebug>
 
 inline constexpr auto CONFIG_NAME{ ":/cfg/map.json" };
 
@@ -140,15 +139,15 @@ namespace MobileRobots
         loadImages();
 
         m_map = map_t(m_envDescr->getWidth());
-        for (uint32_t i{}; i < m_map.size(); ++i)
+        for (uint32_t i{}; static_cast<size_t>(i) < m_map.size(); ++i)
         {
             const auto size = m_envDescr->getHeight();
 
-            m_map[i].resize(size);
+            m_map[static_cast<size_t>(i)].resize(static_cast<size_t>(size));
             for (uint32_t j{}; j < size; ++j)
             {
-                m_map[i][j] = m_scene->addPixmap(m_images.at("DarkGrass"));
-                m_map[i][j]->setPos(i * static_cast<qreal>(m_scaleFactor.x), j * static_cast<qreal>(m_scaleFactor.y));
+                m_map[static_cast<size_t>(i)][static_cast<size_t>(j)] = m_scene->addPixmap(m_images.at("DarkGrass"));
+                m_map[static_cast<size_t>(i)][static_cast<size_t>(j)]->setPos(i * static_cast<qreal>(m_scaleFactor.x), j * static_cast<qreal>(m_scaleFactor.y));
             }
         }  
 
@@ -316,6 +315,6 @@ namespace MobileRobots
         draw();
 
         if (m_ai->finished())
-            qDebug() << "FINISHED";
+            ; // TODO: analyze results
     }
 } // namespace MobileRobots
