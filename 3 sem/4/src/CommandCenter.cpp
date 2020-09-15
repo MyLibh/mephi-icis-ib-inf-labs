@@ -69,7 +69,8 @@ namespace MobileRobots
 						if (auto device = std::dynamic_pointer_cast<ObservationCenter>(sEnvDesc->getObject(coord)); 
 							device &&
 							!device->getOwner() &&
-							m_manager->addDevice(device))
+							m_manager->addDevice(device)
+							)
 						{
 							device->setOwner(shared_from_this());
 						}
