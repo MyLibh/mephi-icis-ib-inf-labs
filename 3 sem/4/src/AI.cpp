@@ -17,9 +17,16 @@ namespace MobileRobots
 		std::unordered_map<Coord, Coord> prev;
 		std::queue<Coord>                queue;
 	
-		static auto tryAdd = [&](const Coord& cur, const Coord& coord)
+		auto wasUsed = [&](const Coord& coord) { return used.find(coord) != std::end(used); };
+
+		auto tryAdd = [&](const Coord& cur, const Coord coord)
 		{
-			if (m_envDescr->isInField(coord) && used.find(coord) == std::end(used) && isExplored(coord) && m_map.at(coord) == nullptr && owner.distanceTo(coord) <= ownerRadius)
+			if (m_envDescr->isInField(coord) &&
+				!wasUsed(coord) &&
+				isExplored(coord) &&
+				m_map.at(coord) == nullptr &&
+				owner.distanceTo(coord) <= ownerRadius
+				)
 			{
 				queue.push(coord);
 
@@ -72,7 +79,15 @@ namespace MobileRobots
 			for (const auto& [coord, object] : objectsAround)
 			{
 				if (!isExplored(coord))
+				{
 					m_tasks.insert(coord);
+
+					if (typeid(*commander) == typeid(RobotCommander))
+					{
+						auto& [it, _] = m_cache.try_emplace(std::dynamic_pointer_cast<RobotCommander>(commander), std::stack<Coord>{});
+						it->second.push(coord);
+					}
+				}
 
 				addExploredPoint(coord, object);
 			}
@@ -115,6 +130,20 @@ namespace MobileRobots
 		if (hasTask(std::dynamic_pointer_cast<RobotScout>(commander)))
 			return false;
 
+		if (auto robotCommander = std::dynamic_pointer_cast<RobotCommander>(commander); m_cache.find(robotCommander) != std::end(m_cache))
+			while (!m_cache.at(robotCommander).empty())
+			{
+				auto to = m_cache.at(robotCommander).top();
+				m_cache.at(robotCommander).pop();
+
+				if (auto&& route = makeRoute(robotCommander->getPos(), to); route)
+				{
+					m_routes.emplace(std::dynamic_pointer_cast<RobotScout>(robotCommander), route);
+
+					return true;
+				}
+			}
+	
 		for (auto& to : m_tasks)
 			if (auto&& route = makeRoute(commander->getPos(), to); route)
 			{
@@ -148,7 +177,8 @@ namespace MobileRobots
 		m_tasks(),
 		m_commanders(),
 		m_routes(),
-		m_finished{}
+		m_finished{},
+		m_cache()
 	{
 		for (const auto& object : m_envDescr->getObjects())
 		{

@@ -4,9 +4,11 @@
 #include "CommandCenter.hpp"
 #include "Route.hpp"
 #include "RobotScout.hpp"
+#include "RobotCommander.hpp"
 
 #include <map>
 #include <set>
+#include <stack>
 
 namespace MobileRobots
 {
@@ -14,6 +16,9 @@ namespace MobileRobots
 
 	class AI final : public std::enable_shared_from_this<AI>
 	{
+	private:
+		using tasks_cache_t = std::unordered_map<std::shared_ptr<RobotCommander>, std::stack<Coord>>;
+
 	private:
 		Route makeRoute(const Coord& from, const Coord& to, const Coord& owner, const unsigned ownerRadius = std::numeric_limits<unsigned>::max()) const;
 
@@ -42,7 +47,7 @@ namespace MobileRobots
 		[[nodiscard]]
 		inline auto getMapUpdates() noexcept { return std::move(m_mapUpdates); }
 
-		inline bool isExplored(const Coord& coord) const noexcept { return m_map.find(coord) != std::end(m_map); }		
+		inline bool isExplored(const Coord& coord) const noexcept { return m_map.find(coord) != std::end(m_map); }
 
 		void work();
 
@@ -56,6 +61,7 @@ namespace MobileRobots
 		std::unordered_map<std::shared_ptr<RobotScout>, Route> m_routes;
 		std::set<Coord>                                        m_mapUpdates;
 		bool                                                   m_finished;
+		tasks_cache_t                                          m_cache;
 	};
 } // namespace MobileRobots
 
