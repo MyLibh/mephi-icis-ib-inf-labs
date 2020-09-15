@@ -3,7 +3,7 @@
  *
  * @ingroup Utility
  *
- * @brief Provides an implementation of point
+ * @brief Implementation of point
  *
  * @note Assumes that each coordinate is in range [0; 2^32)
  *
@@ -29,16 +29,32 @@ namespace MobileRobots
 		uint32_t x;
 		uint32_t y;
 
+		/**
+		 * @brief Default constructor
+		*/
 		inline constexpr Coord() noexcept :
 			x{},
 			y{}
 		{ }
 
+		/**
+		 * @brief Constructs point with coords { x, y }
+		 * 
+		 * @param x 
+		 * @param y 
+		*/
 		inline constexpr Coord(const uint32_t x, const uint32_t y) noexcept :
 			x(x),
 			y(y)
 		{ }
 
+		/**
+		 * @brief Calculates distance to another point
+		 * 
+		 * @param other Point, distance to is calculated
+		 * 
+		 * @return distance to 'other' 
+		*/
 		inline constexpr auto distanceTo(const Coord& other) const noexcept { return Math::hypot(detail::maxSubMin(x, other.x), detail::maxSubMin(y, other.y)); }
 	};
 
