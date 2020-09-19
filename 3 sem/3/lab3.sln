@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "proj\UnitTests
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StaticImpl", "proj\StaticImpl\StaticImpl.vcxproj", "{B7CC8182-63E2-4E9C-AF4A-0B4BEA9CBDE0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsImpl", "proj\GraphicsImpl\GraphicsImpl.vcxproj", "{ABB97DFB-2A34-4F61-98D2-6377F01C3FCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,12 @@ Global
 		{B7CC8182-63E2-4E9C-AF4A-0B4BEA9CBDE0}.Release|x64.Build.0 = Release|x64
 		{B7CC8182-63E2-4E9C-AF4A-0B4BEA9CBDE0}.Release|x86.ActiveCfg = Release|Win32
 		{B7CC8182-63E2-4E9C-AF4A-0B4BEA9CBDE0}.Release|x86.Build.0 = Release|Win32
+		{ABB97DFB-2A34-4F61-98D2-6377F01C3FCB}.Debug|x64.ActiveCfg = Debug|x64
+		{ABB97DFB-2A34-4F61-98D2-6377F01C3FCB}.Debug|x64.Build.0 = Debug|x64
+		{ABB97DFB-2A34-4F61-98D2-6377F01C3FCB}.Debug|x86.ActiveCfg = Debug|x64
+		{ABB97DFB-2A34-4F61-98D2-6377F01C3FCB}.Release|x64.ActiveCfg = Release|x64
+		{ABB97DFB-2A34-4F61-98D2-6377F01C3FCB}.Release|x64.Build.0 = Release|x64
+		{ABB97DFB-2A34-4F61-98D2-6377F01C3FCB}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

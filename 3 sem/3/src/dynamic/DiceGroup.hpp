@@ -81,6 +81,9 @@ public:
 	}
 
 	[[nodiscard]]
+	inline constexpr auto getSize() const noexcept { return m_size; }
+
+	[[nodiscard]]
 	inline size_t getSum() const noexcept
 	{
 		size_t sum{};

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/GraphicsImpl"/>
+    <qresource prefix="/">
+        <file>assets/6.png</file>
+    </qresource>
+</RCC>

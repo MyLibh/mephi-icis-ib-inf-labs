@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GraphicsImplClass</class>
+ <widget class="QMainWindow" name="GraphicsImplClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>949</width>
+    <height>668</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>GraphicsImpl</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QPushButton" name="increaseChanceButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>181</width>
+      <height>651</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Increase</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="decreaseChanceButton">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>10</y>
+      <width>181</width>
+      <height>651</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Decrease</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="rollButton">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>510</y>
+      <width>371</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Roll</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="statusLabel">
+    <property name="geometry">
+     <rect>
+      <x>204</x>
+      <y>10</y>
+      <width>541</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="canvas">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>80</y>
+      <width>551</width>
+      <height>421</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="GraphicsImpl.qrc"/>
+ </resources>
+ <connections/>
+</ui>
