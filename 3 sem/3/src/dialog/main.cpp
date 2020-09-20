@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "../dynamic/DiceGroup.hpp"
-#include "../dynamic/Utility.hpp"
+#include "../../include/Utility.hpp"
 
 #include <iostream>
 
