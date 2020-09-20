@@ -23,15 +23,19 @@ private:
 private:
     void loadImages();
 
-    void increaseChance();
+    void repos();
 
-    void decreaseChance();
+    void removeDice();
 
-    void animate();
+    void addDice();
+
+    void update();
 
     void roll();
 
     void showResult();
+
+    void keyPressEvent(QKeyEvent* event) override;
 
 public:
     GraphicsImpl(QWidget* parent = nullptr);
@@ -42,7 +46,7 @@ private:
     std::unique_ptr<Ui::GraphicsImplClass> m_ui;
     std::unique_ptr<QGraphicsScene>        m_scene;
     std::unique_ptr<DiceGroup>             m_dices;
-    std::vector<QPixmap>                   m_images;
+    std::map<std::string, QPixmap>         m_images;
     std::vector<QGraphicsPixmapItem*>      m_items;
 };
 

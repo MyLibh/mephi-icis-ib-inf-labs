@@ -45,11 +45,6 @@
     <OutDir>$(SolutionDir)\bin\$(Configuration)_$(Platform)\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lab3\lab3.vcxproj">
-      <Project>{51480daf-a188-4217-950b-1b98780169d0}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

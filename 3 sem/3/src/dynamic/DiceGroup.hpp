@@ -98,12 +98,20 @@ public:
 	inline void roll() noexcept
 	{
 		for (size_t i{}; i < m_size; ++i)
-			m_dices[i] = util::generator::get(0, 6);
+			m_dices[i] = util::generator::get(1, 6);
 	}
 
 	void swap(DiceGroup& other) noexcept;
 
 	bool areAllTheSame() const noexcept;
+
+	inline void popBack()
+	{
+		if (!m_size)
+			throw std::out_of_range("Can't pop. Dice group empty");
+
+		--m_size;
+	}
 
 private:
 	size_t                     m_size;

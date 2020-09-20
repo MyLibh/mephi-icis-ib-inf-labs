@@ -15,18 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\dynamic\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\dynamic\DiceGroup.cpp">
+    <ClCompile Include="..\..\src\static\DiceGroup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\dynamic\DiceGroup.hpp">
+    <ClInclude Include="..\..\src\static\Utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\dynamic\Utility.hpp">
+    <ClInclude Include="..\..\src\static\DiceGroup.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
