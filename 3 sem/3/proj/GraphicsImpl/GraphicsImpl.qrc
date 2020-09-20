@@ -1,6 +1,17 @@
 <RCC>
-    <qresource prefix="/GraphicsImpl"/>
-    <qresource prefix="/">
-        <file>assets/6.png</file>
-    </qresource>
+  <qresource prefix="/">
+    <file>assets/buttons/add.png</file>
+    <file>assets/buttons/remove.png</file>
+    <file>assets/buttons/roll.png</file>
+    <file>assets/status/lose.png</file>
+    <file>assets/status/roll.png</file>
+    <file>assets/status/win.png</file>
+    <file>assets/1.png</file>
+    <file>assets/2.png</file>
+    <file>assets/3.png</file>
+    <file>assets/4.png</file>
+    <file>assets/5.png</file>
+    <file>assets/base.png</file>
+    <file>assets/6.png</file>
+  </qresource>
 </RCC>
