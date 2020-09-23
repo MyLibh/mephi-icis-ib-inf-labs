@@ -25,7 +25,7 @@ namespace detail
 	}
 
 	inline static double constexpr __vectorcall sqr(const double x) noexcept { return (x * x); }
-} // anonymous namespace
+} // namespace detail
 
 class Ellipse
 {
