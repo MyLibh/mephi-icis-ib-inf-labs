@@ -1,10 +1,16 @@
 #ifndef __UTILITY_HPP_INCLUDED__
 #define __UTILITY_HPP_INCLUDED__
 
-#include <string_view>
 #include <iostream>
 
-template<typename _Ty, typename = std::enable_if_t<std::is_arithmetic_v<_Ty>>>
+namespace std
+{
+	template<typename _Ty>
+	concept numeric = std::is_arithmetic_v<_Ty>; // USER-DEFINED concept
+} // namespace std
+
+template<std::numeric _Ty>
+_NODISCARD
 _Ty input(const std::string_view name = "", std::istream& istr = std::cin)
 {
 	if (!name.empty())
