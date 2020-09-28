@@ -6,6 +6,7 @@
 #include <memory>
 #include <map>
 #include <algorithm>
+#include <vector>
 
 using type_t = int;
 
@@ -15,7 +16,7 @@ signed main()
 		 n{ input<size_t>("n") };
 	
 	auto matrix{ std::make_unique<std::unique_ptr<type_t[]>[]>(m) }; // CRS? -No.
-	auto vector{ std::make_unique<type_t[]>(m) };
+	std::vector<type_t> vector(m);
 	for (size_t i{}; i < m; ++i)
 	{
 		std::map<type_t, size_t> map;
@@ -40,8 +41,7 @@ signed main()
 			std::cout << matrix[i][j] << (j + 1 == n ? "\n" : " ");
 
 	std::cout << "Vector:\n";
-	for (size_t i{}; i < m; ++i)
-		std::cout << vector[i] << std::endl;
+	std::copy(std::begin(vector), std::end(vector), std::ostream_iterator<type_t>(std::cout, "\n"));
 
 	return 0;
 }
