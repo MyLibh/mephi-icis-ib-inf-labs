@@ -16,7 +16,7 @@
   * [Лабораторная работа №3b](2%20sem/3b)
   * [Лабораторная работа №4a](2%20sem/4a)
   * [Лабораторная работа №4b](2%20sem/4b)
-  * [Лабораторная работа №5](https://github.com/MyLibh/ChromaticBinarySearchTree)
+  * [Лабораторная работа №5](https://github.com/MyLibh/ChromaticBinarySearchTree) (Chromatic Binary Search Tree)
   * [Лабораторная работа №6](2%20sem/6)
 
 * [3 семестр](3%20sem) [Объектно-ориентированное программирование]
