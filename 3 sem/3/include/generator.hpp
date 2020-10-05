@@ -29,12 +29,11 @@ namespace util
         [[nodiscard]]
         inline static constexpr char get_char() noexcept { return generator::ASCII[generator::get(std::size_t{ 0 }, std::size(generator::ASCII) - 1)]; }
 
-        template<typename Pred>
         [[nodiscard]]
-        static std::string get_str(const std::size_t length, Pred&& pred = [](auto& c) { c = generator::get_char(); }) noexcept
+        static std::string get_str(const std::size_t length) noexcept
         {
             std::string res(length, '\0');
-            std::transform(std::begin(res), std::end(res), pred);
+            std::transform(std::begin(res), std::end(res), std::begin(res), [](char& c) { return generator::get_char(); });
 
             return res;
         }
