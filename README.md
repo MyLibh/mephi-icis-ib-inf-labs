@@ -24,4 +24,4 @@
   * [Лабораторная работа №2](3%20sem/2)
   * [Лабораторная работа №3](3%20sem/3)
   * [Лабораторная работа №4](https://github.com/MyLibh/MobileRobots) (Mobile Robots)
-  * [Лабораторная работа №5]()
+  * [Лабораторная работа №5](https://github.com/MyLibh/TransportNet) (Transport Net)
