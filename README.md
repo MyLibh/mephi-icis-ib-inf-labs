@@ -24,6 +24,10 @@
   * [Лабораторная работа №2](3%20sem/2)
   * [Лабораторная работа №3](3%20sem/3)
   * [Лабораторная работа №4](https://github.com/MyLibh/MobileRobots) (Mobile Robots)
-  * [Лабораторная работа №4]() ()
+  * [Лабораторная работа №4](https://github.com/MyLibh/TowerDefence) (Tower Defence)
   * [Лабораторная работа №5](https://github.com/MyLibh/PetriNet) (PetriNet)
   * [Лабораторная работа №5](https://github.com/MyLibh/TransportNet) (Transport Net)
+
+* [4 семестр](4%20sem) [Низкоуровневое программирование]
+  * [Лабораторная работа №1](4%20/1)
+  * [Лабораторная работа №2](4%20/2)
