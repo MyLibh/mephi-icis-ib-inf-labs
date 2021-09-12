@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     accel = [time[0] / time[i] for i in range(MAX_THREADS_NUM)]
     accel_theor = [time_theor[0] / time_theor[i] for i in range(MAX_THREADS_NUM)]
-    make_plots(x, accel, accel_theor, ["speedup factor", "base"], "accel", y_min=0.5)
+    make_plots(x, accel, accel_theor, ["speedup factor", "base"], "accel", y_max=max(accel))
 
     eff = [accel[i] / (i + 1) for i in range (MAX_THREADS_NUM)]
     eff_theor = [accel_theor[i] / (i + 1) for i in range (MAX_THREADS_NUM)]

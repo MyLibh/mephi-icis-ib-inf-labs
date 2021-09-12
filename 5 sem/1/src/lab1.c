@@ -6,7 +6,7 @@
 #include <float.h>
 
 // #define __SAME_DATA__
-
+inline int max_fn(int* array, const int size, const int threads_num);
 int max_fn(int* array, const int size, const int threads_num)
 {
     int max = array[0];
@@ -41,12 +41,12 @@ int main(int argc, char** argv)
         for (int threads_num = 1; threads_num <= THREADS_NUM_MAX; ++threads_num)
         {
             double start = omp_get_wtime(); 
-            max_fn(array, size, 5);
+            max_fn(array, size, threads_num);
             double end = omp_get_wtime(); 
             
             times[threads_num - 1] = end - start;
 
-            printf ("Test #%d threads_num: %2d time: %fs\n", i + 1, threads_num, end - start);
+            printf ("Test #%d threads_num: %2d time: %fs\n", i + 1, threads_num, times[threads_num - 1]);
         }
 
         int pos = -1;
